@@ -1,15 +1,39 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Login Form Editor script loaded.');
+    // ... (all previous code: selectors, drag/drop, resize, background logic)
+    // For brevity, only new/modified parts are shown in detail.
+    // Assume all previous functions and event listeners are correctly in place.
 
-    // Existing selectors (condensed)
+    console.log('Login Form Editor script loaded. Initializing icons...');
+
+    // --- Full code from previous steps should be here ---
+    // Ensure all selectors and functions like createFormElement, makeElementResizable,
+    // background handlers, etc., are present.
     const draggableElements = document.querySelectorAll('.draggable-element');
     const loginFormContainer = document.getElementById('login-form-container');
-    // ... (other selectors like formContainerHasContent, color pickers, gradient inputs/buttons)
+    let formContainerInitialized = false;
+    if (loginFormContainer && loginFormContainer.children.length > 0 && !loginFormContainer.querySelector('p')) {
+        formContainerInitialized = true;
+    }
+     if (loginFormContainer && loginFormContainer.children.length === 1 && loginFormContainer.querySelector('p')) {
+        formContainerInitialized = false;
+    }
 
-    // Drag and Drop, Element Creation, Resizing, Color/Gradient BG logic (assumed to be present)
-    // ... (full code for createFormElement, makeElementResizable, color/gradient handlers) ...
-    // For brevity, I'm omitting the full code of previous functions here.
-    // Assume they are defined as in the previous step.
+    const pageBgColorInput = document.getElementById('page-bg-color');
+    const formBgColorInput = document.getElementById('form-bg-color');
+    const pageGradientColor1Input = document.getElementById('page-gradient-color1');
+    const pageGradientColor2Input = document.getElementById('page-gradient-color2');
+    const pageGradientAngleInput = document.getElementById('page-gradient-angle');
+    const applyPageGradientButton = document.getElementById('apply-page-gradient');
+    const clearPageBgButton = document.getElementById('clear-page-bg');
+    const formGradientColor1Input = document.getElementById('form-gradient-color1');
+    const formGradientColor2Input = document.getElementById('form-gradient-color2');
+    const formGradientAngleInput = document.getElementById('form-gradient-angle');
+    const applyFormGradientButton = document.getElementById('apply-form-gradient');
+    const clearFormBgButton = document.getElementById('clear-form-bg');
+    const pageBgImageInput = document.getElementById('page-bg-image');
+    const formBgImageInput = document.getElementById('form-bg-image');
+
+    // Event listeners for drag/drop
     draggableElements.forEach(elem => {
         elem.addEventListener('dragstart', (event) => {
             event.dataTransfer.setData('text/plain', event.target.dataset.type);
@@ -20,92 +44,82 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    loginFormContainer.addEventListener('dragover', (event) => {
-        event.preventDefault();
-        loginFormContainer.style.border = '2px dashed #007bff';
-    });
+    if(loginFormContainer) {
+        loginFormContainer.addEventListener('dragover', (event) => { event.preventDefault(); loginFormContainer.style.border = '2px dashed #007bff'; });
+        loginFormContainer.addEventListener('dragleave', () => { loginFormContainer.style.border = 'none'; });
+        loginFormContainer.addEventListener('drop', (event) => {
+            event.preventDefault();
+            loginFormContainer.style.border = 'none';
+            const elementType = event.dataTransfer.getData('text/plain');
+            if (!formContainerInitialized && loginFormContainer.querySelector('p')) {
+                loginFormContainer.innerHTML = '';
+                formContainerInitialized = true;
+                loginFormContainer.style.display = 'block';
+                loginFormContainer.style.textAlign = 'left';
+                loginFormContainer.style.position = 'relative';
+            }
+            const newElement = createFormElement(elementType);
+            if (newElement) {
+                loginFormContainer.appendChild(newElement);
+                makeElementResizable(newElement);
+            }
+        });
+    }
 
-    loginFormContainer.addEventListener('dragleave', () => {
-        loginFormContainer.style.border = 'none';
-    });
 
-    // --- BACKGROUND CONTROL LOGIC (Solid Color, Gradient, Clear - from previous steps) ---
-    const pageBgColorInput = document.getElementById('page-bg-color');
-    const formBgColorInput = document.getElementById('form-bg-color');
-
+    // Background color logic
     if (pageBgColorInput) {
         pageBgColorInput.addEventListener('input', (event) => {
             document.body.style.backgroundImage = 'none';
             document.body.style.backgroundColor = event.target.value;
         });
     }
-
     if (formBgColorInput && loginFormContainer) {
         formBgColorInput.addEventListener('input', (event) => {
             loginFormContainer.style.backgroundImage = 'none';
             loginFormContainer.style.backgroundColor = event.target.value;
         });
     }
-
-    // Page Gradient
-    const pageGradientColor1Input = document.getElementById('page-gradient-color1');
-    const pageGradientColor2Input = document.getElementById('page-gradient-color2');
-    const pageGradientAngleInput = document.getElementById('page-gradient-angle');
-    const applyPageGradientButton = document.getElementById('apply-page-gradient');
-    const clearPageBgButton = document.getElementById('clear-page-bg');
-
+    // Gradient logic
     if (applyPageGradientButton && pageGradientColor1Input && pageGradientColor2Input && pageGradientAngleInput) {
         applyPageGradientButton.addEventListener('click', () => {
             const color1 = pageGradientColor1Input.value;
             const color2 = pageGradientColor2Input.value;
             const angle = pageGradientAngleInput.value;
-            document.body.style.backgroundColor = ''; // Clear solid color
+            document.body.style.backgroundColor = '';
             document.body.style.backgroundImage = `linear-gradient(${angle}deg, ${color1}, ${color2})`;
         });
     }
-
     if (clearPageBgButton && pageBgColorInput) {
         clearPageBgButton.addEventListener('click', () => {
             document.body.style.backgroundImage = 'none';
             document.body.style.backgroundColor = pageBgColorInput.value;
-             if(pageBgImageInput) pageBgImageInput.value = ""; // Clear file input
+            if(pageBgImageInput) pageBgImageInput.value = "";
         });
     }
-
-    // Form Gradient
-    const formGradientColor1Input = document.getElementById('form-gradient-color1');
-    const formGradientColor2Input = document.getElementById('form-gradient-color2');
-    const formGradientAngleInput = document.getElementById('form-gradient-angle');
-    const applyFormGradientButton = document.getElementById('apply-form-gradient');
-    const clearFormBgButton = document.getElementById('clear-form-bg');
-
     if (applyFormGradientButton && loginFormContainer && formGradientColor1Input && formGradientColor2Input && formGradientAngleInput) {
         applyFormGradientButton.addEventListener('click', () => {
             const color1 = formGradientColor1Input.value;
             const color2 = formGradientColor2Input.value;
             const angle = formGradientAngleInput.value;
-            loginFormContainer.style.backgroundColor = ''; // Clear solid color
+            loginFormContainer.style.backgroundColor = '';
             loginFormContainer.style.backgroundImage = `linear-gradient(${angle}deg, ${color1}, ${color2})`;
         });
     }
-
     if (clearFormBgButton && loginFormContainer && formBgColorInput) {
         clearFormBgButton.addEventListener('click', () => {
             loginFormContainer.style.backgroundImage = 'none';
             loginFormContainer.style.backgroundColor = formBgColorInput.value;
-            if(formBgImageInput) formBgImageInput.value = ""; // Clear file input
+            if(formBgImageInput) formBgImageInput.value = "";
         });
     }
 
-    // --- NEW BACKGROUND IMAGE LOGIC ---
-    const pageBgImageInput = document.getElementById('page-bg-image');
-    const formBgImageInput = document.getElementById('form-bg-image');
-
+    // Background image logic
     function applyBackgroundImage(targetElement, file, fileInputToReset) {
         if (file && file.type.startsWith('image/')) {
             const reader = new FileReader();
             reader.onload = (e) => {
-                targetElement.style.backgroundColor = ''; // Clear solid color
+                targetElement.style.backgroundColor = '';
                 targetElement.style.backgroundImage = `url('${e.target.result}')`;
                 targetElement.style.backgroundSize = 'cover';
                 targetElement.style.backgroundPosition = 'center center';
@@ -114,62 +128,73 @@ document.addEventListener('DOMContentLoaded', () => {
             reader.readAsDataURL(file);
         } else if (file) {
             alert("Please select a valid image file.");
-            if (fileInputToReset) fileInputToReset.value = ""; // Reset the input
+            if (fileInputToReset) fileInputToReset.value = "";
         }
     }
-
     if (pageBgImageInput) {
         pageBgImageInput.addEventListener('change', (event) => {
             const file = event.target.files[0];
-            if (file) {
-                applyBackgroundImage(document.body, file, pageBgImageInput);
-            }
+            if (file) applyBackgroundImage(document.body, file, pageBgImageInput);
         });
     }
-
     if (formBgImageInput && loginFormContainer) {
         formBgImageInput.addEventListener('change', (event) => {
             const file = event.target.files[0];
-            if (file) {
-                applyBackgroundImage(loginFormContainer, file, formBgImageInput);
-            }
-        });
-    }
-    // --- END OF NEW BACKGROUND IMAGE LOGIC ---
-
-    // Ensure full function definitions for createFormElement and makeElementResizable are included
-    let formContainerInitialized = false;
-    if (loginFormContainer && loginFormContainer.children.length > 0 && !loginFormContainer.querySelector('p')) {
-        formContainerInitialized = true;
-    }
-     if (loginFormContainer && loginFormContainer.children.length === 1 && loginFormContainer.querySelector('p')) {
-        formContainerInitialized = false;
-    }
-
-
-    if(loginFormContainer) { // Ensure loginFormContainer exists before adding drop listener
-        loginFormContainer.addEventListener('drop', (event) => {
-            event.preventDefault();
-            loginFormContainer.style.border = 'none';
-            const elementType = event.dataTransfer.getData('text/plain');
-
-            if (!formContainerInitialized && loginFormContainer.querySelector('p')) {
-                loginFormContainer.innerHTML = '';
-                formContainerInitialized = true;
-                loginFormContainer.style.display = 'block';
-                loginFormContainer.style.textAlign = 'left';
-                loginFormContainer.style.position = 'relative';
-            }
-
-            const newElement = createFormElement(elementType); // Uses globalThis.createFormElement
-            if (newElement) {
-                loginFormContainer.appendChild(newElement);
-                makeElementResizable(newElement); // Uses globalThis.makeElementResizable
-            }
+            if (file) applyBackgroundImage(loginFormContainer, file, formBgImageInput);
         });
     }
 
-    function createFormElement(type) { // Changed from globalThis.createFormElement to just function
+    // --- ICON IMPLEMENTATION ---
+    const iconPalette = document.getElementById('icon-palette');
+    const icons = [
+        { name: 'circle', svg: '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" fill="currentColor"/></svg>' },
+        { name: 'square', svg: '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="80" height="80" fill="currentColor"/></svg>' },
+        { name: 'star', svg: '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,5 61,35 95,35 67,57 78,87 50,70 22,87 33,57 5,35 39,35" fill="currentColor"/></svg>'},
+        { name: 'heart', svg: '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M50,87 C-20,40 20,-10 50,25 C80,-10 120,40 50,87 Z" fill="crimson"/></svg>'}
+    ];
+
+    if (iconPalette) {
+        icons.forEach(iconData => {
+            const iconDiv = document.createElement('div');
+            iconDiv.className = 'icon-item'; // Use class from style.css
+            iconDiv.innerHTML = iconData.svg;
+            iconDiv.title = `Add ${iconData.name}`;
+            iconDiv.style.width = '30px'; // Define size for the SVG container
+            iconDiv.style.height = '30px';
+            iconDiv.style.color = '#333'; // Default color for icons using currentColor
+
+            iconDiv.addEventListener('click', (event) => {
+                const newIconOnPage = document.createElement('div');
+                newIconOnPage.innerHTML = iconData.svg;
+                newIconOnPage.className = 'page-icon';
+                newIconOnPage.style.position = 'absolute';
+
+                const existingIcons = document.querySelectorAll('.page-icon').length;
+                newIconOnPage.style.left = `${100 + existingIcons * 40}px`;
+                newIconOnPage.style.top = `${100}px`;
+                newIconOnPage.style.width = '50px';
+                newIconOnPage.style.height = '50px';
+                newIconOnPage.style.zIndex = '1000';
+                newIconOnPage.style.cursor = 'move';
+
+                if (iconData.name === 'heart') {
+                    newIconOnPage.style.color = 'crimson';
+                } else {
+                    newIconOnPage.style.color = '#5555dd';
+                }
+
+                document.body.appendChild(newIconOnPage);
+                console.log(`Added ${iconData.name} icon to page.`);
+            });
+            iconPalette.appendChild(iconDiv);
+        });
+    } else {
+        console.error("Icon palette element not found!");
+    }
+
+    // --- END OF ICON IMPLEMENTATION ---
+
+    function createFormElement(type) {
         let elementWrapper = document.createElement('div');
         elementWrapper.className = 'form-element-wrapper';
         elementWrapper.style.position = 'relative';
@@ -227,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return elementWrapper;
     };
 
-    function makeElementResizable(elementWrapper) { // Changed from globalThis.makeElementResizable to just function
+    function makeElementResizable(elementWrapper) {
         const resizeHandle = document.createElement('div');
         resizeHandle.className = 'resize-handle bottom-right';
         resizeHandle.style.cssText = `
@@ -266,4 +291,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.removeEventListener('mouseup', stopResize);
         }
     };
+
+    if (pageBgColorInput) document.body.style.backgroundColor = pageBgColorInput.value;
+    if (formBgColorInput && loginFormContainer) loginFormContainer.style.backgroundColor = formBgColorInput.value;
+
 });

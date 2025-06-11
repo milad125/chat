@@ -1,144 +1,321 @@
+/* style.css */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; /* Modern font stack */
     margin: 0;
-    background-color: #eef1f5; /* Softer page background */
-    color: #333;
+    background-color: #f4f7f9; /* Lighter, softer page background */
+    color: #333a40; /* Slightly softer text color */
     line-height: 1.6;
+    font-size: 16px; /* Base font size */
 }
 
 #editor-container {
     display: flex;
     width: 95vw;
-    max-width: 1600px;
+    max-width: 1800px; /* Increased max-width */
     height: 90vh;
     margin: 2.5vh auto;
     background-color: #ffffff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    border-radius: 12px; /* Softer corners */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07); /* Softer, more diffused shadow */
+    border-radius: 16px; /* Larger, softer corners */
     overflow: hidden;
 }
 
 #toolbar {
-    width: 280px; /* Slightly wider toolbar */
-    background-color: #f8f9fa;
-    padding: 20px;
-    border-right: 1px solid #e0e0e0;
+    width: 300px; /* Slightly wider for more controls */
+    background-color: #fcfdff; /* Very light toolbar background */
+    padding: 25px;
+    border-right: 1px solid #e8edf0; /* Softer border */
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Space between toolbar sections */
+    gap: 25px;
 }
 
 .toolbar-section {
     background-color: #ffffff;
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-radius: 12px; /* Softer corners for sections */
+    padding: 20px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04); /* Subtle shadow for sections */
+    border: 1px solid #f0f3f6; /* Light border for definition */
 }
 
 .toolbar-section h3 {
-    font-size: 0.9em;
-    color: #495057;
+    font-size: 0.95em; /* Slightly larger */
+    font-weight: 600; /* Semi-bold */
+    color: #2c3e50; /* Darker, professional blue/grey */
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px; /* Wider spacing */
     margin-top: 0;
-    margin-bottom: 15px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e8edf0;
+    padding-bottom: 12px;
 }
 
+.toolbar-section h4.setting-subheader {
+    font-size: 0.85em;
+    font-weight: 600;
+    color: #566573;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    text-transform: none; /* Normal case for subheaders */
+    letter-spacing: 0.3px;
+}
+.toolbar-section h4.setting-subheader:first-of-type {
+    margin-top: 0;
+}
+
+
 #draggable-elements .draggable-element {
-    background-color: #e9ecef;
+    background-color: #f8f9fa; /* Light background */
     color: #343a40;
-    padding: 10px 15px;
-    margin-bottom: 8px;
-    border-radius: 6px;
-    border: 1px solid #ced4da;
+    padding: 12px 18px; /* More padding */
+    margin-bottom: 10px;
+    border-radius: 8px; /* Softer corners */
+    border: 1px solid #e0e6eb; /* Softer border */
     cursor: grab;
     font-size: 0.9em;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    font-weight: 500;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+    display: flex; /* For aligning icon + text if added later */
+    align-items: center;
 }
 
 #draggable-elements .draggable-element:hover {
-    background-color: #dde2e6;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background-color: #eef2f7; /* Lighter hover */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+    border-color: #d1d9e0;
+}
+#draggable-elements .draggable-element:active {
+    cursor: grabbing;
+    transform: scale(0.98);
 }
 
 #page-settings label,
-#form-settings label {
+#form-settings label,
+#icon-settings label { /* Added icon-settings label */
     display: block;
-    font-size: 0.85em;
+    font-size: 0.88em; /* Slightly larger label */
     color: #495057;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+#page-settings input[type="color"],
+#form-settings input[type="color"],
+#page-settings input[type="number"], /* Style number inputs */
+#form-settings input[type="number"],
+#page-settings input[type="file"], /* Style file inputs */
+#form-settings input[type="file"] {
+    width: 100%;
+    height: 40px; /* Taller inputs */
+    border: 1px solid #dbe1e6; /* Softer border */
+    border-radius: 6px; /* Softer corners */
+    padding: 0 8px; /* Horizontal padding for text/number */
+    box-sizing: border-box; /* Consistent box model */
+    margin-bottom: 12px; /* Space below inputs */
+    font-size: 0.9em;
 }
 
 #page-settings input[type="color"],
 #form-settings input[type="color"] {
-    width: 100%;
-    height: 35px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    padding: 0; /* Remove default padding for color input */
+    padding: 2px; /* Reset padding for color type for swatch */
     cursor: pointer;
 }
-/* Webkit specific styling for color input to make swatch larger */
-#page-settings input[type="color"]::-webkit-color-swatch-wrapper,
-#form-settings input[type="color"]::-webkit-color-swatch-wrapper {
-    padding: 2px;
+
+#page-settings input[type="file"],
+#form-settings input[type="file"] {
+    padding: 8px; /* Specific padding for file input text */
+    background-color: #fdfdfd;
 }
-#page-settings input[type="color"]::-webkit-color-swatch,
-#form-settings input[type="color"]::-webkit-color-swatch {
+
+
+/* Buttons in toolbar */
+.setting-button {
+    background-color: #007bff;
+    color: white;
     border: none;
-    border-radius: 2px;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 500;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    display: block; /* Make buttons take full width */
+    width: 100%;
+    margin-top: 8px;
+    text-align: center;
+}
+.setting-button:hover {
+    background-color: #0069d9;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.setting-button.clear-button {
+    background-color: #6c757d; /* Grey for clear buttons */
+    margin-top: 15px; /* More space above clear buttons */
+}
+.setting-button.clear-button:hover {
+    background-color: #5a6268;
 }
 
 
 #canvas {
     flex-grow: 1;
-    padding: 30px; /* More padding */
-    background-color: #f4f6f8; /* Slightly different canvas background */
+    padding: 40px; /* More padding */
+    background-color: #e9edf0; /* Canvas background slightly different from page */
     overflow: auto;
-    display: flex; /* Keep this for centering form container initially */
-    justify-content: center; /* Keep this for centering form container initially */
-    align-items: center; /* Keep this for centering form container initially */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align form to top */
 }
 
 #login-form-container {
-    width: 350px; /* Default width for the form */
-    min-height: 200px; /* Default min height */
+    width: 380px; /* Slightly wider default form */
+    min-height: 250px;
     background-color: #ffffff;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    /* Centering text for placeholder, will be removed by actual form elements */
+    padding: 30px; /* More padding inside form */
+    border-radius: 12px; /* Softer corners for form */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); /* Softer shadow for form */
+    color: #333a40;
+    transition: background-color 0.3s ease, background-image 0.3s ease; /* Smooth bg transitions */
+    /* display: block; by default after first element is added via JS */
+    /* text-align: left; by default after first element is added via JS */
+}
+/* Placeholder text styling if it's re-shown or for initial state */
+#login-form-container p:only-child {
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
-    color: #6c757d;
-    transition: background-color 0.3s ease; /* For background changes */
+    height: 100%;
+    min-height: 200px; /* Ensure placeholder takes space */
+    color: #77838f;
+    font-size: 1.1em;
 }
 
-/* Styles for icons in the palette - will be used later */
+/* Styling for elements created by JS inside the form */
+.form-element-wrapper {
+    /* position: relative; (already set by JS) */
+    /* margin-bottom: 10px; (already set by JS) */
+    /* padding: 5px; (already set by JS) */
+    /* These styles in JS should be moved to CSS if possible in a future refactor */
+}
+
+.form-element { /* Class for actual input/button/label */
+    /* display: block; (JS) */
+    /* width: 100%; (JS) */
+    /* padding: 8px; (JS for inputs, adjust for buttons/labels) */
+    /* border: 1px solid #ccc; (JS) */
+    /* border-radius: 4px; (JS) */
+    /* box-sizing: border-box; (JS) */
+    font-size: 1em; /* Ensure form elements inherit base font size */
+}
+
+/* More specific styling for form elements */
+#login-form-container input.form-element,
+#login-form-container button.form-element,
+#login-form-container label.form-element {
+    padding: 12px 10px; /* Consistent padding */
+    border: 1px solid #dce1e5;
+    border-radius: 6px;
+    margin-bottom: 12px; /* Consistent spacing */
+}
+
+#login-form-container input.form-element:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    outline: none;
+}
+
+#login-form-container button.form-element {
+    background-color: #007bff; /* Default button color from JS */
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+}
+#login-form-container button.form-element:hover {
+    background-color: #0069d9;
+}
+
+#login-form-container label.form-element {
+    /* border: 1px dashed #ccc; (JS) */ /* Keep for edit indication */
+    background-color: transparent;
+    padding: 10px; /* Adjust padding for labels */
+    display: inline-block; /* Allow labels to size by content or be resized */
+    width: auto !important; /* Override JS width:100% for labels */
+}
+
+
+/* Resize Handle Styling */
+.resize-handle.bottom-right {
+    /* JS applies: position, width, height, bg-color, border, border-radius, bottom, right, cursor, z-index */
+    /* Ensure these are !important if JS styles conflict, or remove JS styling for these */
+    background-color: #007bff !important; /* Example */
+    border: 2px solid #fff !important;
+}
+
+/* Icon Palette in Toolbar */
 #icon-palette {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 12px; /* Increased gap */
 }
 
 #icon-palette .icon-item {
-    font-size: 24px; /* Adjust as needed */
+    width: 40px; /* Larger palette icons */
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #e0e6eb;
+    border-radius: 8px;
     cursor: pointer;
-    padding: 5px;
-    border-radius: 4px;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    color: #495057; /* Default icon color in palette */
 }
-
+#icon-palette .icon-item svg { /* Ensure SVGs scale */
+    width: 60%;
+    height: 60%;
+}
 #icon-palette .icon-item:hover {
     background-color: #e9ecef;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-color: #d1d9e0;
 }
 
-/* Hide the initial placeholder text from index.html if it's still there */
-#toolbar > p, #canvas > p {
-    display: none;
+/* Icons added to the page */
+.page-icon {
+    /* position: absolute; (JS) */
+    /* width: 50px; (JS) */
+    /* height: 50px; (JS) */
+    /* z-index: 1000; (JS) */
+    /* cursor: move; (JS) */
+    /* color: #5555dd; (JS) */
+    display: flex; /* For centering SVG if needed */
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s ease; /* For future interactions */
+}
+.page-icon svg {
+    width: 100%;
+    height: 100%;
+}
+.page-icon:hover {
+    transform: scale(1.1); /* Simple hover effect */
+}
+
+/* Scrollbar styling (optional, for a more polished look) */
+#toolbar::-webkit-scrollbar, #canvas::-webkit-scrollbar {
+    width: 8px;
+}
+#toolbar::-webkit-scrollbar-track, #canvas::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+#toolbar::-webkit-scrollbar-thumb, #canvas::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+#toolbar::-webkit-scrollbar-thumb:hover, #canvas::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
 }
