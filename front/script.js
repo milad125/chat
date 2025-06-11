@@ -1,12 +1,17 @@
 // Debounce utility function
 function debounce(func, delay) {
     let timeoutId;
-    return function(...args) {
+    const debounced = function(...args) {
         clearTimeout(timeoutId);
         timeoutId = setTimeout(() => {
             func.apply(this, args);
         }, delay);
     };
+    debounced.flush = function(...args) { // Added flush
+        clearTimeout(timeoutId);
+        func.apply(this, args);
+    };
+    return debounced;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,6 +22,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedIconElement = null;
     const pageBody = document.body;
     const editorContainer = document.querySelector('.editor-container');
+
+    const elementIconsSVG = {
+        'text-input': '<svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="M2 5.5A1.5 1.5 0 013.5 4h13A1.5 1.5 0 0118 5.5v9A1.5 1.5 0 0116.5 16h-13A1.5 1.5 0 012 14.5v-9zM16.5 5H3.5a.5.5 0 00-.5.5v9a.5.5 0 00.5.5h13a.5.5 0 00.5-.5v-9a.5.5 0 00-.5-.5z"/><path d="M4 7h12v1H4V7zm0 3h8v1H4v-1z"/></svg>',
+        'email-input': '<svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>',
+        'password-input': '<svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v7a2 2 0 002 2h10a2 2 0 002-2v-7a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6zM5 11v7h10v-7H5z" clip-rule="evenodd"/></svg>',
+        'submit-button': '<svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="M3.5 2A1.5 1.5 0 002 3.5v13A1.5 1.5 0 003.5 18h13a1.5 1.5 0 001.5-1.5v-13A1.5 1.5 0 0016.5 2h-13zm13 1.5a.5.5 0 00-.5-.5h-13a.5.5 0 00-.5.5v13a.5.5 0 00.5.5h13a.5.5 0 00.5-.5v-13z"/><path d="M10 13.5a.5.5 0 01-.5-.5V8.707l-1.646 1.647a.5.5 0 01-.708-.708l2.5-2.5a.5.5 0 01.708 0l2.5 2.5a.5.5 0 01-.708.708L10.5 8.707V13a.5.5 0 01-.5.5z"/></svg>',
+        'label': '<svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M17.707 3.293a1 1 0 00-1.414 0l-11 11A1 1 0 006 15H3a1 1 0 100 2h3a1 1 0 00.707-.293l11-11a1 1 0 000-1.414zM7.414 15L17 5.414 14.586 3 5 12.586V15h2.414z"/><path d="M4.5 2A2.5 2.5 0 002 4.5v1c0 .27.03.53.08.79L10.5 18h.01c.16 0 .3-.07.4-.2l1.6-2.4a1.24 1.24 0 00-.07-1.7L4.5 2zm0 1a1.5 1.5 0 011.5 1.5v.05L3.05 7.5H3V4.5A1.5 1.5 0 014.5 3z"/></svg>',
+        'checkbox': '<svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V3zm1.5 1a.5.5 0 00-.5.5v11a.5.5 0 00.5.5h11a.5.5 0 00.5-.5v-11a.5.5 0 00-.5-.5h-11z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M13.78 6.22a.75.75 0 010 1.06l-5.5 5.5a.75.75 0 01-1.06 0l-2.5-2.5a.75.75 0 111.06-1.06L7.5 11.19l4.97-4.97a.75.75 0 011.06 0z" clip-rule="evenodd"/></svg>',
+        'radio': '<svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M10 3a7 7 0 100 14 7 7 0 000-14zm0 1.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11z" clip-rule="evenodd"/><path d="M10 6.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7z"/></svg>',
+        'textarea': '<svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="M2 5.5A1.5 1.5 0 013.5 4h13A1.5 1.5 0 0118 5.5v9A1.5 1.5 0 0116.5 16h-13A1.5 1.5 0 012 14.5v-9zM16.5 5H3.5a.5.5 0 00-.5.5v9a.5.5 0 00.5.5h13a.5.5 0 00.5-.5v-9a.5.5 0 00-.5-.5z"/><path d="M4 7h12v1H4V7zm0 2h12v1H4V9zm0 2h8v1H4v-1zm0 2h10v1H4v-1z"/></svg>'
+    };
 
     let currentBackgroundSettings = {
         page: { type: 'solid', color: '#f4f6f8', gradient: '', image: '' },
@@ -164,7 +180,24 @@ document.addEventListener('DOMContentLoaded', () => {
         updateBackground(formCanvas, currentBackgroundSettings.form, true);
     }
 
-    for(const id in formElementsConfig){const c=formElementsConfig[id],e=document.createElement('div');e.classList.add('form-element');e.setAttribute('data-element-type',id);e.textContent=c.name;elementsPanel.appendChild(e);}
+    // Populate Elements Panel - MODIFIED FOR ICONS
+    for (const id in formElementsConfig) {
+        const config = formElementsConfig[id];
+        const elDiv = document.createElement('div');
+        elDiv.classList.add('form-element');
+        elDiv.setAttribute('data-element-type', id);
+
+        const iconHTML = elementIconsSVG[id] || '<svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z"/></svg>'; // Default icon
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = config.name;
+        // nameSpan.style.marginLeft = 'var(--space-2)'; // REMOVED - handle spacing with CSS on SVG
+
+        elDiv.innerHTML = iconHTML;
+        elDiv.appendChild(nameSpan);
+
+        elementsPanel.appendChild(elDiv);
+    }
+
     interact('.form-element',{context:elementsPanel}).draggable({inertia:true,autoScroll:true,listeners:{start(t){const e=t.target,n=e.cloneNode(true);n.classList.add('dragging-clone');n.style.position='absolute';n.style.left=(t.clientX-e.offsetWidth/2)+'px';n.style.top=(t.clientY-e.offsetHeight/2)+'px';document.body.appendChild(n);t.interaction.draggedClone=n},move(t){const e=t.interaction.draggedClone;e.style.left=(parseFloat(e.style.left)||0)+t.dx+'px';e.style.top=(parseFloat(e.style.top)||0)+t.dy+'px'},end(t){const e=t.interaction.draggedClone;e&&e.remove();delete t.interaction.draggedClone;}}});
     interact('.login-form-canvas').dropzone({accept:'.form-element',ondrop:function(t){const e=t.relatedTarget,n=e.getAttribute('data-element-type');if(formElementsConfig[n]){const o=createFormElementFromConfig(n,{type:n});formCanvas.appendChild(o);makeElementResizableAndDraggable(o);populateElementSettings(o);debouncedSaveState();}t.target.classList.remove('drop-target');e.classList.remove('can-drop')},ondropactivate:t=>t.target.classList.add('drop-active'),ondragenter:t=>{t.target.classList.add('drop-target');t.relatedTarget.classList.add('can-drop')},ondragleave:t=>{t.target.classList.remove('drop-target');t.relatedTarget.classList.remove('can-drop')},ondropdeactivate:t=>t.target.classList.remove('drop-active')});
     new Sortable(formCanvas,{animation:150,handle:'.dropped-element-wrapper',draggable:'.dropped-element-wrapper',ghostClass:'sortable-ghost',chosenClass:'sortable-chosen',dragClass:'sortable-drag', onEnd: debouncedSaveState});
@@ -190,11 +223,10 @@ document.addEventListener('DOMContentLoaded', () => {
         let originalTransition = element.style.transition;
         element.style.transition = 'none';
 
-        const w = element.style.width, h = element.style.height; // Preserve width/height
-        element.style.cssText = ''; // Clear all inline styles first
-        if(w && element === formCanvas) element.style.width = w; // Restore width/height for formCanvas
+        const w = element.style.width, h = element.style.height;
+        element.style.cssText = '';
+        if(w && element === formCanvas) element.style.width = w;
         if(h && element === formCanvas) element.style.height = h;
-
 
         switch(settings.type){
             case'solid':element.style.background=settings.color||'';break;
@@ -258,12 +290,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if(selectedIconElement) { selectedIconElement.classList.remove('selected-icon'); selectedIconElement = null; }
         selectedElementWrapper = elementWrapper; selectedElementWrapper.classList.add('selected');
 
-        // Refined actualElement selection
         let actualElement = elementWrapper.querySelector(':scope > .dropped-form-element');
         if (!actualElement && elementWrapper.querySelector(':scope > label > .dropped-form-element')) {
             actualElement = elementWrapper.querySelector(':scope > label > .dropped-form-element');
         }
-        if (!actualElement && elementWrapper.firstChild?.classList?.contains('dropped-form-element')) { // Fallback
+        if (!actualElement && elementWrapper.firstChild?.classList?.contains('dropped-form-element')) {
             actualElement = elementWrapper.firstChild;
         }
 
@@ -313,11 +344,11 @@ document.addEventListener('DOMContentLoaded', () => {
         t.value=currentAppliedTemplate||"";
     }
     function applyTemplate(templateKey, isLoadingState = false) {
-        currentAppliedTemplate = templateKey; // Set this at the beginning
+        currentAppliedTemplate = templateKey;
         const template = formTemplates[templateKey];
         if (!template) {
             console.warn(`Template with key "${templateKey}" not found. Applying default.`);
-            if (templateKey !== 'default') { // Avoid infinite loop if default is missing
+            if (templateKey !== 'default') {
                 applyTemplate('default', isLoadingState);
             }
             return;
@@ -336,16 +367,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if(templateContainer) settingsPanelContent.appendChild(templateContainer); else populateTemplateSelector();
         if(iconContainer) settingsPanelContent.appendChild(iconContainer); else populateIconUploader();
 
-        // Deep clone and replace for form background settings
-        let newFormBgSettings = JSON.parse(JSON.stringify(formTemplates['default'].formBackground));
-        if (template.formBackground) {
-            newFormBgSettings.type = template.formBackground.type || newFormBgSettings.type;
-            newFormBgSettings.color = template.formBackground.color || newFormBgSettings.color;
-            newFormBgSettings.gradient = template.formBackground.gradient || newFormBgSettings.gradient;
-            newFormBgSettings.image = template.formBackground.image || newFormBgSettings.image;
-            newFormBgSettings.styles = template.formBackground.styles ? JSON.parse(JSON.stringify(template.formBackground.styles)) : {};
-        }
-        currentBackgroundSettings.form = newFormBgSettings;
+        currentBackgroundSettings.form = JSON.parse(JSON.stringify({...formTemplates['default'].formBackground, ...(template.formBackground || {})}));
+        currentBackgroundSettings.form.styles = template.formBackground?.styles ? JSON.parse(JSON.stringify(template.formBackground.styles)) : {};
 
         currentBackgroundSettings.page = JSON.parse(JSON.stringify({...formTemplates['default'].pageBackground, ...(template.pageBackground || {})}));
 
@@ -373,7 +396,63 @@ document.addEventListener('DOMContentLoaded', () => {
         if(selectedIconElement) selectedIconElement.classList.remove('selected-icon');
         selectedElementWrapper = null;
         selectedIconElement = null;
-        settingsPanelContent.innerHTML = '<h2>Editor Settings</h2>';
+
+        settingsPanelContent.innerHTML = '';
+
+        const title = document.createElement('h2');
+        title.textContent = 'تنظیمات ویرایشگر';
+        settingsPanelContent.appendChild(title);
+
+        const saveButton = document.createElement('button');
+        saveButton.id = 'save-editor-state-button';
+        saveButton.textContent = 'ذخیره تغییرات';
+        saveButton.addEventListener('click', () => {
+            saveStateToLocalStorage(); // Direct call for explicit save
+            const originalText = saveButton.textContent;
+            saveButton.textContent = 'ذخیره شد!';
+            saveButton.classList.add('saved');
+            saveButton.disabled = true;
+            setTimeout(() => {
+                saveButton.textContent = originalText;
+                saveButton.classList.remove('saved');
+                saveButton.disabled = false;
+            }, 2000);
+        });
+        settingsPanelContent.appendChild(saveButton);
+
+        const previewButton = document.createElement('button');
+        previewButton.id = 'preview-form-button';
+        previewButton.textContent = 'پیش‌نمایش فرم';
+        previewButton.style.backgroundColor = 'var(--text-color-secondary)';
+        previewButton.style.marginTop = 'var(--space-2)';
+
+        previewButton.addEventListener('click', () => {
+            pageBody.classList.add('preview-mode');
+            editorContainer.style.width = '100vw';
+            editorContainer.style.height = '100vh';
+            editorContainer.style.maxWidth = '100vw';
+            editorContainer.style.maxHeight = '100vh';
+            editorContainer.style.borderRadius = '0';
+            editorContainer.style.border = 'none';
+        });
+        settingsPanelContent.appendChild(previewButton);
+
+        if (!document.getElementById('exit-preview-button')) {
+            const exitPreviewBtn = document.createElement('button');
+            exitPreviewBtn.id = 'exit-preview-button';
+            exitPreviewBtn.textContent = 'خروج از پیش‌نمایش';
+            exitPreviewBtn.addEventListener('click', () => {
+                pageBody.classList.remove('preview-mode');
+                editorContainer.style.width = '';
+                editorContainer.style.height = '';
+                editorContainer.style.maxWidth = '';
+                editorContainer.style.maxHeight = '';
+                editorContainer.style.borderRadius = '';
+                editorContainer.style.border = '';
+            });
+            pageBody.appendChild(exitPreviewBtn);
+        }
+
         populateTemplateSelector();
         populateIconUploader();
         populateBackgroundSettings();
@@ -659,3 +738,5 @@ document.addEventListener('DOMContentLoaded', () => {
         document.head.appendChild(styleSheet);
     }
 });
+
+[end of front/script.js]

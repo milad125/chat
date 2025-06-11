@@ -1,3 +1,53 @@
+@font-face {
+    font-family: 'IRANYekanWeb';
+    font-style: normal;
+    font-weight: 300; /* Light */
+    src: local('IRANYekanWebFaNum-Light'),
+         url('/fonts/woff2/IRANYekanWebFaNum-Light.woff2') format('woff2'),
+         url('/fonts/woff/IRANYekanWebFaNum-Light.woff') format('woff');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'IRANYekanWeb';
+    font-style: normal;
+    font-weight: 400; /* Regular */
+    src: local('IRANYekanWebFaNum-Regular'),
+         url('/fonts/woff2/IRANYekanWebFaNum-Regular.woff2') format('woff2'),
+         url('/fonts/woff/IRANYekanWebFaNum-Regular.woff') format('woff');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'IRANYekanWeb';
+    font-style: normal;
+    font-weight: 500; /* Medium */
+    src: local('IRANYekanWebFaNum-Medium'),
+         url('/fonts/woff2/IRANYekanWebFaNum-Medium.woff2') format('woff2'),
+         url('/fonts/woff/IRANYekanWebFaNum-Medium.woff') format('woff');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'IRANYekanWeb';
+    font-style: normal;
+    font-weight: 600; /* SemiBold/DemiBold */
+    src: local('IRANYekanWebFaNum-DemiBold'),
+         url('/fonts/woff2/IRANYekanWebFaNum-DemiBold.woff2') format('woff2'),
+         url('/fonts/woff/IRANYekanWebFaNum-DemiBold.woff') format('woff');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'IRANYekanWeb';
+    font-style: normal;
+    font-weight: 700; /* Bold */
+    src: local('IRANYekanWebFaNum-Bold'),
+         url('/fonts/woff2/IRANYekanWebFaNum-Bold.woff2') format('woff2'),
+         url('/fonts/woff/IRANYekanWebFaNum-Bold.woff') format('woff');
+    font-display: swap;
+}
+
 /* Reset basic styles */
 * {
     margin: 0;
@@ -36,8 +86,8 @@
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
 
     /* Typography */
-    --font-primary: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-    --font-secondary: 'Roboto', sans-serif;
+    --font-primary: 'IRANYekanWeb', 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    --font-secondary: 'IRANYekanWeb', 'Roboto', sans-serif;
 
     --font-size-base: 14px;
     --font-size-sm: 13px;
@@ -47,8 +97,8 @@
     --font-size-xl: 20px;
     --font-size-title: 24px;
 
-    --line-height-base: 1.5;
-    --line-height-tight: 1.25;
+    --line-height-base: 1.65; /* Updated */
+    --line-height-tight: 1.45; /* Updated */
 
     /* Spacing */
     --space-1: 4px;
@@ -112,6 +162,8 @@ body {
     align-items: center;
     min-height: 100vh;
     overflow: hidden;
+    text-align: right;
+    font-weight: 400;
 }
 
 .editor-container {
@@ -137,11 +189,11 @@ body {
 }
 
 .settings-panel {
-    border-right: 1px solid var(--border-color);
+    border-left: 1px solid var(--border-color);
 }
 
 .elements-panel {
-    border-left: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
 }
 
 .form-preview-area {
@@ -184,7 +236,8 @@ body {
     margin-bottom: var(--space-4);
     padding-bottom: var(--space-2);
     border-bottom: 1px solid var(--border-color);
-    font-weight: 600;
+    font-weight: 700;
+    text-align: right;
 }
 
 .settings-panel h3,
@@ -193,17 +246,19 @@ body {
 .settings-panel .icon-settings-title {
     font-size: var(--font-size-md);
     color: var(--text-color-primary);
-    font-weight: 500;
+    font-weight: 600;
     margin-top: var(--space-6);
     margin-bottom: var(--space-3);
     padding-bottom: var(--space-2);
     border-bottom: 1px solid var(--tertiary-color);
+    text-align: right;
 }
 .settings-panel h4 {
     font-size: var(--font-size-base);
     color: var(--text-color-secondary);
     font-weight: 600;
     margin-bottom: var(--space-3);
+    text-align: right;
 }
 
 /* Settings Panel Controls Styling */
@@ -211,24 +266,25 @@ body {
 .settings-panel .template-selector-label,
 .settings-panel .icon-settings-container label[for="icon-upload-input"] {
     display: block;
-    font-weight: 500;
+    font-weight: 500; /* Updated */
     color: var(--text-color-secondary);
     font-size: var(--font-size-sm);
     margin-bottom: var(--space-2);
     line-height: var(--line-height-tight);
+    text-align: right;
 }
 
 .settings-panel .background-type-selector label {
     display: inline-flex;
     align-items: center;
-    margin-right: var(--space-3);
+    margin-left: var(--space-3);
     font-size: var(--font-size-sm);
-    font-weight: 400;
+    font-weight: 400; /* Kept as Regular */
     color: var(--text-color-secondary);
     cursor: pointer;
 }
 .settings-panel .background-type-selector input[type="radio"] {
-    margin-right: var(--space-1);
+    margin-left: var(--space-1);
     cursor: pointer;
     accent-color: var(--primary-color);
 }
@@ -303,7 +359,7 @@ body {
     border: none;
     padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-sm);
-    margin-right: var(--space-3);
+    margin-left: var(--space-3);
     cursor: pointer;
 }
 .settings-panel input[type="file"]::file-selector-button:hover {
@@ -319,7 +375,7 @@ body {
 .settings-panel .remove-button {
     display: block;
     width: 100%;
-    padding: var(--space-2) var(--space-4);
+    padding: var(--space-3) var(--space-4); /* Updated */
     font-family: var(--font-primary);
     font-size: var(--font-size-sm);
     font-weight: 600;
@@ -359,16 +415,16 @@ body {
 .elements-panel .form-element {
     display: flex;
     align-items: center;
-    padding: var(--space-3);
+    padding: var(--space-2) var(--space-3);
     background-color: var(--input-background);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     color: var(--text-color-secondary);
-    font-weight: 500;
+    font-weight: 500; /* Updated */
     font-size: var(--font-size-sm);
     cursor: grab;
-    margin-bottom: var(--space-3);
-    text-align: left;
+    margin-bottom: var(--space-2);
+    text-align: right;
     box-shadow: var(--shadow-xs);
 }
 .elements-panel .form-element:hover {
@@ -382,6 +438,16 @@ body {
     background-color: var(--primary-color-light);
     color: var(--text-on-primary);
     border-color: var(--primary-color-dark);
+}
+.elements-panel .form-element svg {
+    width: 18px;
+    height: 18px;
+    margin-right: var(--space-2);
+    flex-shrink: 0;
+}
+html[dir="rtl"] .elements-panel .form-element svg {
+    margin-left: var(--space-2);
+    margin-right: 0;
 }
 
 
@@ -416,7 +482,12 @@ body {
     line-height: var(--line-height-base);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
-    padding: var(--space-2) var(--space-3);
+    /* padding: var(--space-2) var(--space-3); OLD */
+    padding-top: calc(var(--space-2) + 2px); /* Updated */
+    padding-bottom: calc(var(--space-2) + 2px); /* Updated */
+    padding-left: var(--space-3); /* Updated */
+    padding-right: var(--space-3); /* Updated */
+    font-weight: 400;
 }
 .dropped-element-wrapper input,
 .dropped-element-wrapper button,
@@ -437,14 +508,12 @@ select.dropped-form-element {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    /* Updated SVG using currentColor and new path for a chevron down icon */
     background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22currentColor%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M8%2011.03a.75.75%200%200%201-.53-.22l-4-4a.75.75%200%200%201%201.06-1.06L8%209.19l3.47-3.47a.75.75%200%200%201%201.06%201.06l-4%204a.75.75%200%200%201-.53.22Z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E');
     background-repeat: no-repeat;
-    background-position: right var(--space-3) center;
-    background-size: 1em auto; /* Size based on font-size of select */
-
-    /* Adjust padding-right to accommodate the new arrow size and desired spacing */
-    padding-right: calc(var(--space-3) + 1.2em + var(--space-3));
+    background-position: left var(--space-3) center;
+    background-size: 1em auto;
+    padding-left: calc(var(--space-3) + 1.2em + var(--space-3));
+    padding-right: var(--space-3);
 }
 
 button.dropped-form-element,
@@ -453,9 +522,10 @@ button.dropped-form-element,
     background-color: var(--primary-color);
     color: var(--text-on-primary);
     border: none;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     text-align: center;
+    padding: var(--space-2) var(--space-4); /* Updated */
 }
 button.dropped-form-element:hover,
 .dropped-form-element[type="submit"]:hover,
@@ -466,17 +536,18 @@ button.dropped-form-element:hover,
 label.dropped-form-element {
     background-color: transparent;
     border: none;
-    padding: var(--space-2) 0;
+    padding: var(--space-1) 0; /* Updated */
     pointer-events: auto;
     cursor: default;
     color: var(--text-color-primary);
+    font-weight: 500; /* Updated */
 }
 
 .dropped-element-wrapper label .dropped-form-element[type="checkbox"],
 .dropped-element-wrapper label .dropped-form-element[type="radio"] {
     width: auto;
     height: auto;
-    margin-right: var(--space-2);
+    margin-left: var(--space-2);
     display: inline-block;
     vertical-align: middle;
     cursor: pointer;
@@ -491,6 +562,7 @@ label.dropped-form-element {
     font-size: var(--font-size-base);
     pointer-events: auto;
     cursor: pointer;
+    /* line-height: var(--line-height-base); /* Ensure line height if needed */
 }
 
 
@@ -571,4 +643,6 @@ label.dropped-form-element {
     pointer-events: none;
 }
 
-[end of front/style.css]
+.settings-panel .save-button.saved {
+    background-color: var(--accent-success) !important;
+}
