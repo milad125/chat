@@ -1,276 +1,568 @@
-body {
-    font-family: 'Arial', sans-serif;
+/* Reset basic styles */
+* {
     margin: 0;
-    background-color: #f4f6f8;
-    color: #333;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Color Palette - Inspired by modern UI tools */
+    --primary-color: #4A90E2; /* A modern, friendly blue */
+    --primary-color-light: #7BAAF7;
+    --primary-color-dark: #3A7BC8;
+    --primary-color-light-rgb: 123, 170, 247; /* Added for box-shadow */
+
+    --secondary-color: #F7F9FC; /* Light gray for panel backgrounds */
+    --tertiary-color: #E4E8F0; /* Slightly darker gray for borders, inputs */
+
+    --text-color-primary: #2D3748; /* Dark gray for primary text */
+    --text-color-secondary: #4A5568; /* Medium gray for secondary text, labels */
+    --text-color-light: #718096;   /* Lighter gray for placeholders, help text */
+    --text-on-primary: #FFFFFF;    /* Text color on primary background */
+
+    --accent-success: #48BB78;    /* Green for success messages */
+    --accent-error: #F56565;      /* Red for error messages */
+    --accent-warning: #ECC94B;   /* Yellow for warnings */
+
+    --background-main: #FFFFFF;   /* Main workspace background (form canvas area) */
+    --background-app: #EDF2F7;    /* Overall app background */
+    --border-color: var(--tertiary-color); /* Default border color */
+    --input-background: #FFFFFF;
+
+    /* Shadows - subtle and layered */
+    --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+
+    /* Typography */
+    --font-primary: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --font-secondary: 'Roboto', sans-serif;
+
+    --font-size-base: 14px;
+    --font-size-sm: 13px;
+    --font-size-xs: 12px;
+    --font-size-md: 16px;
+    --font-size-lg: 18px;
+    --font-size-xl: 20px;
+    --font-size-title: 24px;
+
+    --line-height-base: 1.5;
+    --line-height-tight: 1.25;
+
+    /* Spacing */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+
+    /* Border Radius */
+    --radius-sm: 3px;
+    --radius-md: 5px;
+    --radius-lg: 8px;
+}
+
+/* Base transitions for interactive elements */
+button,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="file"],
+input[type="color"],
+input[type="url"],
+select,
+textarea,
+.form-element,
+.palette-icon,
+.draggable-icon {
+    transition: background-color 0.2s ease-out,
+                border-color 0.2s ease-out,
+                color 0.2s ease-out,
+                box-shadow 0.2s ease-out,
+                opacity 0.2s ease-out,
+                transform 0.15s ease-out;
+}
+
+.settings-panel .background-config-section {
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out, max-height 0.3s ease-out;
+    overflow: hidden;
+}
+.settings-panel .background-config-section.hidden-section {
+    opacity: 0;
+    transform: translateY(-10px);
+    max-height: 0px !important;
+    pointer-events: none;
+}
+
+
+body {
+    font-family: var(--font-primary);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    color: var(--text-color-primary);
+    background-color: var(--background-app);
+    margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    overflow: hidden; /* Prevents scrollbars from appearing due to editor layout */
+    overflow: hidden;
 }
 
 .editor-container {
     display: flex;
-    width: 95vw; /* Using viewport width */
-    height: 90vh; /* Using viewport height */
-    max-width: 1600px; /* Max width for very large screens */
-    max-height: 900px; /* Max height */
-    background-color: #fff;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    overflow: hidden; /* Ensures children conform to rounded borders */
+    width: 95vw;
+    height: 90vh;
+    max-width: 1800px;
+    max-height: 1000px;
+    background-color: var(--background-main);
+    box-shadow: var(--shadow-lg);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
 }
 
 .settings-panel, .elements-panel {
-    width: 250px; /* Fixed width for side panels */
-    padding: 20px;
-    background-color: #f9fafb; /* Lighter background for panels */
+    width: 280px;
+    padding: var(--space-5);
+    background-color: var(--secondary-color);
     box-sizing: border-box;
-    overflow-y: auto; /* Allow scrolling if content exceeds panel height */
-    border-left: 1px solid #e0e0e0;
-    border-right: 1px solid #e0e0e0;
+    overflow-y: auto;
+    border: none;
 }
 
 .settings-panel {
-    border-right: 1px solid #e0e0e0; /* Separator line */
+    border-right: 1px solid var(--border-color);
 }
 
 .elements-panel {
-    border-left: 1px solid #e0e0e0; /* Separator line */
+    border-left: 1px solid var(--border-color);
 }
 
 .form-preview-area {
-    flex-grow: 1; /* Takes up the remaining space */
-    padding: 20px;
-    background-color: #ffffff; /* Clean white for the preview area */
+    flex-grow: 1;
+    padding: var(--space-5);
+    background-color: var(--background-main);
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center form canvas horizontally */
-    justify-content: flex-start; /* Align form canvas to the top */
-    overflow-y: auto; /* Allow scrolling for the form itself if it's too long */
+    align-items: center;
+    justify-content: flex-start;
+    overflow: auto;
     box-sizing: border-box;
 }
 
 .login-form-canvas {
-    width: 100%; /* Default width, can be resized */
-    max-width: 400px; /* Max width for a typical login form */
-    min-height: 300px; /* Minimum height to make it visible and usable */
-    padding: 20px;
-    background-color: #fdfdfd;
-    border: 1px dashed #ccc; /* Dashed border to indicate drop/resize area */
+    width: 100%;
+    max-width: 450px;
+    min-height: 300px;
+    padding: var(--space-6);
+    border: 1px dashed var(--tertiary-color);
     box-sizing: border-box;
-    position: relative; /* For positioning elements within */
-    margin-top: 20px; /* Space from the "Form Preview" title */
+    position: relative;
+    margin-top: var(--space-5);
+    transition: background-color 0.2s ease-out, border-color 0.2s ease-out;
+}
+.login-form-canvas.drop-active {
+    background-color: var(--primary-color-light) !important;
+    border-color: var(--primary-color) !important;
+}
+.login-form-canvas.drop-target {
+    border-color: var(--primary-color-dark) !important;
+    background-color: var(--primary-color-light) !important;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
 }
 
-h2 {
-    font-size: 1.2em;
-    color: #555;
+.settings-panel h2, .elements-panel h2, .form-preview-area h2 {
+    font-size: var(--font-size-lg);
+    color: var(--text-color-primary);
     margin-top: 0;
-    margin-bottom: 15px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
 }
 
-/* Basic styles for potential form elements (to be expanded) */
-.form-element {
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: #e9ecef;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    cursor: grab; /* Indicate draggable */
-    font-size: 0.9em;
-    text-align: center;
+.settings-panel h3,
+.settings-panel .background-settings-title,
+.settings-panel .template-settings-title,
+.settings-panel .icon-settings-title {
+    font-size: var(--font-size-md);
+    color: var(--text-color-primary);
+    font-weight: 500;
+    margin-top: var(--space-6);
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--tertiary-color);
+}
+.settings-panel h4 {
+    font-size: var(--font-size-base);
+    color: var(--text-color-secondary);
+    font-weight: 600;
+    margin-bottom: var(--space-3);
 }
 
-/* Placeholder for highlight zone during drag */
-.highlight-zone {
-    border: 2px dashed #007bff;
-    background-color: rgba(0, 123, 255, 0.1);
-}
-
-/* Placeholder for resize handles (to be added by Interact.js) */
-.resize-handle {
-    width: 10px;
-    height: 10px;
-    background-color: #007bff;
-    border: 1px solid #fff;
-    position: absolute;
-    /* Further styling based on handle position */
-}
-
-/* Settings Panel Styles */
-.settings-panel h3 {
-    font-size: 1.0em;
-    margin-top: 20px;
-    margin-bottom: 10px;
-    color: #333;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 5px;
-}
-
-.settings-panel label {
+/* Settings Panel Controls Styling */
+.settings-panel label,
+.settings-panel .template-selector-label,
+.settings-panel .icon-settings-container label[for="icon-upload-input"] {
     display: block;
-    margin-bottom: 5px;
-    font-size: 0.9em;
-    color: #555;
+    font-weight: 500;
+    color: var(--text-color-secondary);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-2);
+    line-height: var(--line-height-tight);
+}
+
+.settings-panel .background-type-selector label {
+    display: inline-flex;
+    align-items: center;
+    margin-right: var(--space-3);
+    font-size: var(--font-size-sm);
+    font-weight: 400;
+    color: var(--text-color-secondary);
+    cursor: pointer;
+}
+.settings-panel .background-type-selector input[type="radio"] {
+    margin-right: var(--space-1);
+    cursor: pointer;
+    accent-color: var(--primary-color);
 }
 
 .settings-panel input[type="text"],
-.settings-panel input[type="color"],
 .settings-panel input[type="number"],
+.settings-panel input[type="email"],
+.settings-panel input[type="password"],
+.settings-panel input[type="url"],
+.settings-panel textarea,
 .settings-panel select,
+.settings-panel #template-select {
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--input-background);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-color-primary);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-base);
+    margin-bottom: var(--space-4);
+}
+.settings-panel input[type="text"]:focus,
+.settings-panel input[type="number"]:focus,
+.settings-panel input[type="email"]:focus,
+.settings-panel input[type="password"]:focus,
+.settings-panel input[type="url"]:focus,
+.settings-panel textarea:focus,
+.settings-panel select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(var(--primary-color-light-rgb), 0.35);
+}
+
+.settings-panel input[type="color"] {
+    width: 100%;
+    padding: var(--space-1);
+    height: calc(var(--font-size-sm) * var(--line-height-base) + (2 * var(--space-2)) + 2px + (2 * var(--space-1)));
+    min-height: 38px;
+    cursor: pointer;
+    margin-bottom: var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    background-color: var(--input-background);
+}
+.settings-panel input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+.settings-panel input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: calc(var(--radius-sm) - 1px);
+}
+.settings-panel input[type="color"]::-moz-color-swatch {
+    border: none;
+    border-radius: calc(var(--radius-sm) - 1px);
+}
+
+.settings-panel input[type="file"] {
+    padding: var(--space-2);
+    font-size: var(--font-size-xs);
+    margin-bottom: var(--space-4);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    width: 100%;
+}
+.settings-panel input[type="file"]::file-selector-button {
+    font-family: var(--font-primary);
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    color: var(--text-on-primary);
+    background-color: var(--primary-color);
+    border: none;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    margin-right: var(--space-3);
+    cursor: pointer;
+}
+.settings-panel input[type="file"]::file-selector-button:hover {
+    background-color: var(--primary-color-dark);
+}
+
 .settings-panel textarea {
-    width: calc(100% - 16px);
-    padding: 8px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 0.9em;
+    min-height: 80px;
+    resize: vertical;
+}
+
+.settings-panel button,
+.settings-panel .remove-button {
+    display: block;
+    width: 100%;
+    padding: var(--space-2) var(--space-4);
+    font-family: var(--font-primary);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    text-align: center;
+    margin-top: var(--space-3);
+    margin-bottom: var(--space-4);
 }
 
 .settings-panel button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color 0.2s;
-    display: block;
-    width: calc(100% - 16px);
-    margin-top: 10px;
+    background-color: var(--primary-color);
+    color: var(--text-on-primary);
 }
-
 .settings-panel button:hover {
-    background-color: #0056b3;
+    background-color: var(--primary-color-dark);
+}
+.settings-panel button:active {
+    transform: translateY(1px);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .settings-panel .remove-button {
-    background-color: #dc3545;
+    background-color: var(--accent-error);
+    color: var(--text-on-primary);
 }
 .settings-panel .remove-button:hover {
-    background-color: #c82333;
+    background-color: #D32F2F;
+}
+.settings-panel .remove-button:active {
+    transform: translateY(1px);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
 }
 
+/* Elements Panel Items */
+.elements-panel .form-element {
+    display: flex;
+    align-items: center;
+    padding: var(--space-3);
+    background-color: var(--input-background);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-color-secondary);
+    font-weight: 500;
+    font-size: var(--font-size-sm);
+    cursor: grab;
+    margin-bottom: var(--space-3);
+    text-align: left;
+    box-shadow: var(--shadow-xs);
+}
+.elements-panel .form-element:hover {
+    border-color: var(--primary-color);
+    background-color: var(--tertiary-color);
+    color: var(--primary-color);
+    box-shadow: var(--shadow-sm);
+}
+.elements-panel .form-element:active {
+    cursor: grabbing;
+    background-color: var(--primary-color-light);
+    color: var(--text-on-primary);
+    border-color: var(--primary-color-dark);
+}
+
+
+/* Dropped Elements on Canvas */
+.dropped-element-wrapper {
+    position: relative;
+    margin: var(--space-2) 0;
+    border: 1px dashed transparent;
+    cursor: move;
+    box-sizing: border-box;
+    min-height: 30px;
+}
+.dropped-element-wrapper:hover:not(.selected) {
+    border-color: var(--primary-color-light) !important;
+    box-shadow: var(--shadow-xs);
+}
 .dropped-element-wrapper.selected {
-    border: 2px solid #007bff !important;
-    box-shadow: 0 0 8px rgba(0, 123, 255, 0.6);
+    border-color: var(--primary-color) !important;
+    box-shadow: var(--shadow-sm), 0 0 0 2px rgba(var(--primary-color-light-rgb), 0.35);
 }
 
-/* CSS for background controls */
-.settings-panel .background-settings-title {
-    margin-top: 25px;
-    margin-bottom: 15px;
-    font-size: 1.1em;
-    color: #222;
-    border-top: 1px solid #ddd;
-    padding-top: 15px;
+.dropped-form-element {
+    background-color: var(--input-background);
+    display: block;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    pointer-events: none;
+    color: var(--text-color-primary);
+    font-family: var(--font-primary);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--space-2) var(--space-3);
 }
-.settings-panel .background-type-selector label {
+.dropped-element-wrapper input,
+.dropped-element-wrapper button,
+.dropped-element-wrapper textarea,
+.dropped-element-wrapper label,
+.dropped-element-wrapper select,
+.dropped-element-wrapper span {
+    pointer-events: auto;
+    cursor: default;
+}
+input.dropped-form-element::placeholder,
+textarea.dropped-form-element::placeholder {
+    color: var(--text-color-light);
+    opacity: 0.8;
+}
+
+select.dropped-form-element {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* Updated SVG using currentColor and new path for a chevron down icon */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22currentColor%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M8%2011.03a.75.75%200%200%201-.53-.22l-4-4a.75.75%200%200%201%201.06-1.06L8%209.19l3.47-3.47a.75.75%200%200%201%201.06%201.06l-4%204a.75.75%200%200%201-.53.22Z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right var(--space-3) center;
+    background-size: 1em auto; /* Size based on font-size of select */
+
+    /* Adjust padding-right to accommodate the new arrow size and desired spacing */
+    padding-right: calc(var(--space-3) + 1.2em + var(--space-3));
+}
+
+button.dropped-form-element,
+.dropped-form-element[type="submit"],
+.dropped-form-element[type="button"] {
+    background-color: var(--primary-color);
+    color: var(--text-on-primary);
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+}
+button.dropped-form-element:hover,
+.dropped-form-element[type="submit"]:hover,
+.dropped-form-element[type="button"]:hover {
+    background-color: var(--primary-color-dark);
+}
+
+label.dropped-form-element {
+    background-color: transparent;
+    border: none;
+    padding: var(--space-2) 0;
+    pointer-events: auto;
+    cursor: default;
+    color: var(--text-color-primary);
+}
+
+.dropped-element-wrapper label .dropped-form-element[type="checkbox"],
+.dropped-element-wrapper label .dropped-form-element[type="radio"] {
+    width: auto;
+    height: auto;
+    margin-right: var(--space-2);
     display: inline-block;
-    margin-right: 10px;
-    font-size: 0.85em;
-}
-.settings-panel .background-type-selector input[type="radio"] {
-    margin-right: 3px;
     vertical-align: middle;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    background-color: transparent;
+    accent-color: var(--primary-color);
+}
+.dropped-element-wrapper label span {
+    vertical-align: middle;
+    color: var(--text-color-primary);
+    font-size: var(--font-size-base);
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+
+/* Resize Handles (Interact.js) */
+.interact-resize-handle {
+    background-color: var(--primary-color);
+    border: 1px solid var(--text-on-primary);
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    box-sizing: border-box;
+    z-index: 101;
+    opacity: 0.75;
+}
+.interact-resize-handle:hover {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+
+/* Styles that were previously more general or specific to settings panel, now scoped or adjusted */
+.highlight-zone {
+    border: 2px dashed var(--primary-color);
+    background-color: rgba(var(--primary-color-light-rgb), 0.1);
 }
 .background-config-section {
-    border: 1px solid #eee;
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 4px;
+    border: 1px solid var(--tertiary-color);
+    padding: var(--space-3);
+    margin-top: var(--space-3);
+    border-radius: var(--radius-md);
 }
-.hidden-section {
-    display: none;
-}
-
-/* CSS for template selector */
-.settings-panel .template-settings-title {
-    margin-top: 25px;
-    margin-bottom: 10px;
-    font-size: 1.1em;
-    color: #222;
-    border-top: 1px solid #ddd;
-    padding-top: 15px;
-}
-
-.settings-panel .template-selector-label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 0.9em;
-    color: #555;
-}
-
-.settings-panel #template-select {
-    width: calc(100% - 16px);
-    padding: 8px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 0.9em;
-    background-color: white;
-}
-
-/* Icon uploader and palette styles */
-.settings-panel .icon-settings-title {
-    margin-top: 25px;
-    margin-bottom: 10px;
-    font-size: 1.1em;
-    color: #222;
-    border-top: 1px solid #ddd;
-    padding-top: 15px;
-}
-
 .settings-panel #icon-upload-input {
     display: block;
-    margin-bottom: 10px;
-    font-size: 0.9em;
-    /* Basic styling for file input might be limited, browser dependent */
+    margin-bottom: var(--space-3);
+    font-size: var(--font-size-sm);
 }
-
 #uploaded-icons-palette {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    padding: 10px;
-    background-color: #f0f0f0;
-    border-radius: 4px;
-    margin-top: 10px;
+    gap: var(--space-2);
+    padding: var(--space-2);
+    background-color: var(--tertiary-color);
+    border-radius: var(--radius-md);
+    margin-top: var(--space-2);
     min-height: 50px;
-    border: 1px solid #e0e0e0;
-    max-height: 200px; /* Allow scrolling if many icons */
+    border: 1px solid var(--border-color);
+    max-height: 200px;
     overflow-y: auto;
 }
-
 #uploaded-icons-palette .palette-icon {
     width: 40px;
     height: 40px;
     object-fit: contain;
     cursor: grab;
-    border: 1px solid #ccc;
-    background-color: white;
-    padding: 2px;
-    border-radius: 3px;
+    border: 1px solid var(--border-color);
+    background-color: var(--background-main);
+    padding: var(--space-1);
+    border-radius: var(--radius-sm);
 }
-
-/* Styles for icons placed on the page */
 .draggable-icon {
     position: absolute;
     cursor: move;
     z-index: 100;
     border: 1px dashed transparent;
-    box-sizing: border-box; /* Important for width/height including border */
+    box-sizing: border-box;
 }
 .draggable-icon:hover, .draggable-icon.selected-icon {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0,123,255,0.5); /* Added for better visibility */
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-sm), 0 0 0 2px rgba(var(--primary-color-light-rgb), 0.35);
+}
+.draggable-icon.selected-icon {
+     border-color: var(--primary-color-dark) !important;
 }
 .draggable-icon img {
     width: 100%;
@@ -278,3 +570,5 @@ h2 {
     object-fit: contain;
     pointer-events: none;
 }
+
+[end of front/style.css]
