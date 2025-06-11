@@ -1,0 +1,219 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    background-color: #f4f6f8;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden; /* Prevents scrollbars from appearing due to editor layout */
+}
+
+.editor-container {
+    display: flex;
+    width: 95vw; /* Using viewport width */
+    height: 90vh; /* Using viewport height */
+    max-width: 1600px; /* Max width for very large screens */
+    max-height: 900px; /* Max height */
+    background-color: #fff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden; /* Ensures children conform to rounded borders */
+}
+
+.settings-panel, .elements-panel {
+    width: 250px; /* Fixed width for side panels */
+    padding: 20px;
+    background-color: #f9fafb; /* Lighter background for panels */
+    box-sizing: border-box;
+    overflow-y: auto; /* Allow scrolling if content exceeds panel height */
+    border-left: 1px solid #e0e0e0;
+    border-right: 1px solid #e0e0e0;
+}
+
+.settings-panel {
+    border-right: 1px solid #e0e0e0; /* Separator line */
+}
+
+.elements-panel {
+    border-left: 1px solid #e0e0e0; /* Separator line */
+}
+
+.form-preview-area {
+    flex-grow: 1; /* Takes up the remaining space */
+    padding: 20px;
+    background-color: #ffffff; /* Clean white for the preview area */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center form canvas horizontally */
+    justify-content: flex-start; /* Align form canvas to the top */
+    overflow-y: auto; /* Allow scrolling for the form itself if it's too long */
+    box-sizing: border-box;
+}
+
+.login-form-canvas {
+    width: 100%; /* Default width, can be resized */
+    max-width: 400px; /* Max width for a typical login form */
+    min-height: 300px; /* Minimum height to make it visible and usable */
+    padding: 20px;
+    background-color: #fdfdfd;
+    border: 1px dashed #ccc; /* Dashed border to indicate drop/resize area */
+    box-sizing: border-box;
+    position: relative; /* For positioning elements within */
+    margin-top: 20px; /* Space from the "Form Preview" title */
+}
+
+h2 {
+    font-size: 1.2em;
+    color: #555;
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+/* Basic styles for potential form elements (to be expanded) */
+.form-element {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    cursor: grab; /* Indicate draggable */
+    font-size: 0.9em;
+    text-align: center;
+}
+
+/* Placeholder for highlight zone during drag */
+.highlight-zone {
+    border: 2px dashed #007bff;
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+/* Placeholder for resize handles (to be added by Interact.js) */
+.resize-handle {
+    width: 10px;
+    height: 10px;
+    background-color: #007bff;
+    border: 1px solid #fff;
+    position: absolute;
+    /* Further styling based on handle position */
+}
+
+/* Settings Panel Styles */
+.settings-panel h3 {
+    font-size: 1.0em; /* Changed to 1.0em just in case */
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.settings-panel label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.settings-panel input[type="text"],
+.settings-panel input[type="color"],
+.settings-panel input[type="number"],
+.settings-panel select,
+.settings-panel textarea {
+    width: calc(100% - 16px); /* Adjusted for padding */
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 0.9em;
+}
+
+.settings-panel button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s;
+    display: block;
+    width: calc(100% - 16px); /* Adjusted for padding */
+    margin-top: 10px;
+}
+
+.settings-panel button:hover {
+    background-color: #0056b3;
+}
+
+.settings-panel .remove-button {
+    background-color: #dc3545;
+}
+.settings-panel .remove-button:hover {
+    background-color: #c82333;
+}
+
+.dropped-element-wrapper.selected {
+    border: 2px solid #007bff !important;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.6);
+}
+
+/* CSS for background controls */
+.settings-panel .background-settings-title {
+    margin-top: 25px;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    color: #222;
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
+}
+.settings-panel .background-type-selector label {
+    display: inline-block;
+    margin-right: 10px;
+    font-size: 0.85em;
+}
+.settings-panel .background-type-selector input[type="radio"] {
+    margin-right: 3px;
+    vertical-align: middle;
+}
+.background-config-section {
+    border: 1px solid #eee;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 4px;
+}
+.hidden-section {
+    display: none;
+}
+
+/* CSS for template selector */
+.settings-panel .template-settings-title {
+    margin-top: 25px; /* This will be same as background title, might need adjustment if both are always visible */
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    color: #222;
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
+}
+
+.settings-panel .template-selector-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.settings-panel #template-select {
+    width: calc(100% - 16px);
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 0.9em;
+    background-color: white;
+}

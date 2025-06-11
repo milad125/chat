@@ -1,13 +1,30 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form Editor</title>
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="editor-container">
+        <div class="settings-panel">
+            <!-- Settings for selected element will go here -->
+            <h2>Element Settings</h2>
+        </div>
+        <div class="form-preview-area">
+            <!-- Form preview will go here -->
+            <h2>Form Preview</h2>
+            <div id="login-form-canvas" class="login-form-canvas">
+                </div>
+        </div>
+        <div class="elements-panel">
+            <!-- Draggable form elements will go here -->
+            <h2>Elements</h2>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
 </html>
