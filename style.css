@@ -1,0 +1,144 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: #eef1f5; /* Softer page background */
+    color: #333;
+    line-height: 1.6;
+}
+
+#editor-container {
+    display: flex;
+    width: 95vw;
+    max-width: 1600px;
+    height: 90vh;
+    margin: 2.5vh auto;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-radius: 12px; /* Softer corners */
+    overflow: hidden;
+}
+
+#toolbar {
+    width: 280px; /* Slightly wider toolbar */
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-right: 1px solid #e0e0e0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Space between toolbar sections */
+}
+
+.toolbar-section {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.toolbar-section h3 {
+    font-size: 0.9em;
+    color: #495057;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+#draggable-elements .draggable-element {
+    background-color: #e9ecef;
+    color: #343a40;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    cursor: grab;
+    font-size: 0.9em;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#draggable-elements .draggable-element:hover {
+    background-color: #dde2e6;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#page-settings label,
+#form-settings label {
+    display: block;
+    font-size: 0.85em;
+    color: #495057;
+    margin-bottom: 5px;
+}
+
+#page-settings input[type="color"],
+#form-settings input[type="color"] {
+    width: 100%;
+    height: 35px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 0; /* Remove default padding for color input */
+    cursor: pointer;
+}
+/* Webkit specific styling for color input to make swatch larger */
+#page-settings input[type="color"]::-webkit-color-swatch-wrapper,
+#form-settings input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 2px;
+}
+#page-settings input[type="color"]::-webkit-color-swatch,
+#form-settings input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 2px;
+}
+
+
+#canvas {
+    flex-grow: 1;
+    padding: 30px; /* More padding */
+    background-color: #f4f6f8; /* Slightly different canvas background */
+    overflow: auto;
+    display: flex; /* Keep this for centering form container initially */
+    justify-content: center; /* Keep this for centering form container initially */
+    align-items: center; /* Keep this for centering form container initially */
+}
+
+#login-form-container {
+    width: 350px; /* Default width for the form */
+    min-height: 200px; /* Default min height */
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    /* Centering text for placeholder, will be removed by actual form elements */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #6c757d;
+    transition: background-color 0.3s ease; /* For background changes */
+}
+
+/* Styles for icons in the palette - will be used later */
+#icon-palette {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#icon-palette .icon-item {
+    font-size: 24px; /* Adjust as needed */
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+#icon-palette .icon-item:hover {
+    background-color: #e9ecef;
+}
+
+/* Hide the initial placeholder text from index.html if it's still there */
+#toolbar > p, #canvas > p {
+    display: none;
+}
