@@ -1,321 +1,618 @@
-/* style.css */
+/* style.css - UI Polish phase */
+
+/* Ensure body and main container are well-set */
 body {
-    font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; /* Modern font stack */
+    font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     margin: 0;
-    background-color: #f4f7f9; /* Lighter, softer page background */
-    color: #333a40; /* Slightly softer text color */
-    line-height: 1.6;
-    font-size: 16px; /* Base font size */
+    background-color: #f7f9fc; /* Slightly bluer cool grey */
+    color: #333a40;
+    line-height: 1.65; /* Increased for better readability */
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased; /* Smoother fonts on WebKit */
+    -moz-osx-font-smoothing: grayscale; /* Smoother fonts on Firefox */
 }
 
 #editor-container {
     display: flex;
     width: 95vw;
-    max-width: 1800px; /* Increased max-width */
-    height: 90vh;
-    margin: 2.5vh auto;
+    max-width: 1800px;
+    height: 92vh; /* Slightly taller */
+    margin: 4vh auto; /* Centered with a bit more top/bottom margin */
     background-color: #ffffff;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07); /* Softer, more diffused shadow */
-    border-radius: 16px; /* Larger, softer corners */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Slightly deeper shadow */
+    border-radius: 18px; /* Even softer corners */
     overflow: hidden;
 }
 
-#toolbar {
-    width: 300px; /* Slightly wider for more controls */
-    background-color: #fcfdff; /* Very light toolbar background */
-    padding: 25px;
-    border-right: 1px solid #e8edf0; /* Softer border */
+/* Panels: #editor-panel (Left - Settings), #elements-panel (Right - Elements) */
+#editor-panel, #elements-panel {
+    background-color: #ffffff; /* Pure white for panels */
+    padding: 28px; /* Slightly more padding */
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 28px; /* Increased gap */
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.02); /* Subtle inner shadow for depth */
 }
 
+#editor-panel { /* Settings - LEFT */
+    width: 330px;
+    order: 3;
+    border-right: 1px solid #e6eaf0; /* Softer border color */
+    border-left: none;
+}
+
+#elements-panel { /* Draggable items - RIGHT */
+    width: 290px;
+    order: 1;
+    border-left: 1px solid #e6eaf0; /* Softer border color */
+    border-right: none;
+}
+
+#canvas { /* Middle */
+    flex-grow: 1;
+    padding: 40px;
+    background-color: #f0f4f7; /* Softer canvas background */
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    order: 2;
+}
+
+/* Toolbar sections within panels */
 .toolbar-section {
-    background-color: #ffffff;
-    border-radius: 12px; /* Softer corners for sections */
-    padding: 20px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04); /* Subtle shadow for sections */
-    border: 1px solid #f0f3f6; /* Light border for definition */
+    background-color: #fcfdff; /* Very light section background */
+    border-radius: 14px; /* Softer section corners */
+    padding: 22px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Refined shadow */
+    border: 1px solid #edf1f5; /* Lighter border */
 }
 
 .toolbar-section h3 {
-    font-size: 0.95em; /* Slightly larger */
-    font-weight: 600; /* Semi-bold */
-    color: #2c3e50; /* Darker, professional blue/grey */
+    font-size: 1em; /* Adjusted size */
+    font-weight: 600;
+    color: #1a2c3d; /* Darker, more saturated title color */
     text-transform: uppercase;
-    letter-spacing: 0.8px; /* Wider spacing */
+    letter-spacing: 0.7px;
     margin-top: 0;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #e8edf0;
-    padding-bottom: 12px;
+    margin-bottom: 22px;
+    border-bottom: 1px solid #e6eaf0;
+    padding-bottom: 14px;
 }
 
 .toolbar-section h4.setting-subheader {
-    font-size: 0.85em;
-    font-weight: 600;
-    color: #566573;
-    margin-top: 20px;
-    margin-bottom: 10px;
-    text-transform: none; /* Normal case for subheaders */
-    letter-spacing: 0.3px;
+    font-size: 0.9em;
+    font-weight: 500; /* Medium weight */
+    color: #4a5c6d;
+    margin-top: 22px;
+    margin-bottom: 12px;
+    text-transform: none;
+    letter-spacing: 0.2px;
 }
 .toolbar-section h4.setting-subheader:first-of-type {
     margin-top: 0;
 }
 
-
+/* Draggable elements styling */
 #draggable-elements .draggable-element {
-    background-color: #f8f9fa; /* Light background */
-    color: #343a40;
-    padding: 12px 18px; /* More padding */
-    margin-bottom: 10px;
-    border-radius: 8px; /* Softer corners */
-    border: 1px solid #e0e6eb; /* Softer border */
+    background-color: #ffffff; /* White background for elements */
+    color: #333a40;
+    padding: 14px 20px; /* More padding */
+    margin-bottom: 12px;
+    border-radius: 10px; /* Softer */
+    border: 1px solid #e4e9ed; /* Lighter border */
     cursor: grab;
-    font-size: 0.9em;
+    font-size: 0.95em; /* Slightly larger text */
     font-weight: 500;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
-    display: flex; /* For aligning icon + text if added later */
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+    display: flex;
     align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03); /* Subtle shadow */
 }
 
 #draggable-elements .draggable-element:hover {
-    background-color: #eef2f7; /* Lighter hover */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.06);
-    border-color: #d1d9e0;
+    background-color: #f8faff; /* Very light blue hover */
+    box-shadow: 0 5px 10px rgba(0,0,0,0.07);
+    border-color: #c8d3df; /* Highlight border on hover */
+    transform: translateY(-2px); /* Slight lift effect */
 }
 #draggable-elements .draggable-element:active {
     cursor: grabbing;
-    transform: scale(0.98);
+    transform: scale(0.97) translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-#page-settings label,
-#form-settings label,
-#icon-settings label { /* Added icon-settings label */
+/* Inputs and Labels in #editor-panel */
+#editor-panel label,
+#elements-panel label {
     display: block;
-    font-size: 0.88em; /* Slightly larger label */
-    color: #495057;
+    font-size: 0.9em;
+    color: #4a5c6d;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+#editor-panel input[type="color"],
+#editor-panel input[type="number"],
+#editor-panel input[type="file"] {
+    width: 100%;
+    height: 42px;
+    border: 1px solid #dde3e9;
+    border-radius: 8px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    font-size: 0.95em;
+    background-color: #fdfdff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+#editor-panel input[type="color"]:hover,
+#editor-panel input[type="number"]:hover,
+#editor-panel input[type="file"]:hover,
+#editor-panel input[type="color"]:focus,
+#editor-panel input[type="number"]:focus,
+#editor-panel input[type="file"]:focus {
+    border-color: #007bff;
+}
+#editor-panel input:focus {
+    box-shadow: 0 0 0 3px rgba(0,123,255,.15);
+    outline: none;
+}
+
+
+#editor-panel input[type="color"] {
+    padding: 3px;
+    cursor: pointer;
+}
+
+#editor-panel input[type="file"] {
+    padding: 10px;
+}
+
+/* Buttons in #editor-panel */
+#editor-panel .setting-button,
+#elements-panel .setting-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: 500;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,123,255,0.1);
+}
+#editor-panel .setting-button:hover,
+#elements-panel .setting-button:hover {
+    background-color: #0069d9;
+    box-shadow: 0 4px 8px rgba(0,123,255,0.2);
+    transform: translateY(-1px);
+}
+#editor-panel .setting-button:active,
+#elements-panel .setting-button:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 4px rgba(0,123,255,0.1);
+}
+
+#editor-panel .setting-button.clear-button,
+#elements-panel .setting-button.clear-button {
+    background-color: #6c757d;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 18px;
+}
+#editor-panel .setting-button.clear-button:hover,
+#elements-panel .setting-button.clear-button:hover {
+    background-color: #5a6268;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Selected Element Editor Specific Styles */
+#selected-element-settings-section .toolbar-section h3 {
+    color: #0056b3;
+}
+
+.element-editor-control {
+    margin-bottom: 18px;
+    padding: 0;
+}
+
+.element-editor-control label {
+    display: block;
+    font-size: 0.88em;
+    color: #343a40;
     margin-bottom: 6px;
     font-weight: 500;
 }
 
-#page-settings input[type="color"],
-#form-settings input[type="color"],
-#page-settings input[type="number"], /* Style number inputs */
-#form-settings input[type="number"],
-#page-settings input[type="file"], /* Style file inputs */
-#form-settings input[type="file"] {
+.element-editor-control input[type="color"] {
     width: 100%;
-    height: 40px; /* Taller inputs */
-    border: 1px solid #dbe1e6; /* Softer border */
-    border-radius: 6px; /* Softer corners */
-    padding: 0 8px; /* Horizontal padding for text/number */
-    box-sizing: border-box; /* Consistent box model */
-    margin-bottom: 12px; /* Space below inputs */
-    font-size: 0.9em;
-}
-
-#page-settings input[type="color"],
-#form-settings input[type="color"] {
-    padding: 2px; /* Reset padding for color type for swatch */
+    height: 40px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    padding: 3px;
+    box-sizing: border-box;
     cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.element-editor-control input[type="color"]:hover {
+    border-color: #007bff;
+}
+.element-editor-control input[type="color"]:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0,123,255,.15);
+    outline: none;
 }
 
-#page-settings input[type="file"],
-#form-settings input[type="file"] {
-    padding: 8px; /* Specific padding for file input text */
-    background-color: #fdfdfd;
-}
-
-
-/* Buttons in toolbar */
-.setting-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
+.element-editor-control.dimension-control input[type="number"],
+.element-editor-control.side-control input[type="number"],
+.shadow-dimension-control input[type="number"] {
+    width: 70px;
+    padding: 8px 6px;
+    text-align: right;
+    border: 1px solid #ced4da;
     border-radius: 6px;
-    cursor: pointer;
     font-size: 0.9em;
+    height: 38px;
+    box-sizing: border-box;
+}
+.element-editor-control.dimension-control input[type="number"]:hover,
+.element-editor-control.side-control input[type="number"]:hover,
+.element-editor-control.dimension-control input[type="number"]:focus,
+.element-editor-control.side-control input[type="number"]:focus,
+.shadow-dimension-control input[type="number"]:hover,
+.shadow-dimension-control input[type="number"]:focus {
+     border-color: #007bff;
+}
+.element-editor-control.dimension-control input[type="number"]:focus,
+.element-editor-control.side-control input[type="number"]:focus,
+.shadow-dimension-control input[type="number"]:focus {
+    box-shadow: 0 0 0 3px rgba(0,123,255,.15);
+    outline: none;
+}
+
+
+.element-editor-group {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px 15px 15px 15px;
+    margin-bottom: 18px;
+}
+
+.element-editor-group legend {
     font-weight: 500;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
-    display: block; /* Make buttons take full width */
-    width: 100%;
-    margin-top: 8px;
-    text-align: center;
-}
-.setting-button:hover {
-    background-color: #0069d9;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-.setting-button.clear-button {
-    background-color: #6c757d; /* Grey for clear buttons */
-    margin-top: 15px; /* More space above clear buttons */
-}
-.setting-button.clear-button:hover {
-    background-color: #5a6268;
-}
-
-
-#canvas {
-    flex-grow: 1;
-    padding: 40px; /* More padding */
-    background-color: #e9edf0; /* Canvas background slightly different from page */
-    overflow: auto;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; /* Align form to top */
-}
-
-#login-form-container {
-    width: 380px; /* Slightly wider default form */
-    min-height: 250px;
-    background-color: #ffffff;
-    padding: 30px; /* More padding inside form */
-    border-radius: 12px; /* Softer corners for form */
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); /* Softer shadow for form */
     color: #333a40;
-    transition: background-color 0.3s ease, background-image 0.3s ease; /* Smooth bg transitions */
-    /* display: block; by default after first element is added via JS */
-    /* text-align: left; by default after first element is added via JS */
+    padding: 0 8px;
+    font-size: 0.9em;
 }
-/* Placeholder text styling if it's re-shown or for initial state */
+html[dir="rtl"] .element-editor-group legend {
+    margin-left: 5px;
+    margin-right: 0;
+}
+
+
+.side-control {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px !important;
+    padding: 0 !important;
+}
+.side-control label {
+    flex-basis: auto;
+    margin-bottom: 0 !important;
+    font-size: 0.85em !important;
+    margin-right: 8px;
+}
+html[dir="rtl"] .side-control label {
+    margin-right: 0;
+    margin-left: 8px;
+}
+
+.side-control input[type="number"] {
+    flex-grow: 0;
+}
+
+.shadow-dimension-control,
+.shadow-color-control {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.shadow-dimension-control label,
+.shadow-color-control label {
+    flex-basis: auto;
+    margin-right: 8px;
+    font-size: 0.85em;
+    color: #495057;
+    margin-bottom: 0;
+}
+html[dir="rtl"] .shadow-dimension-control label,
+html[dir="rtl"] .shadow-color-control label {
+    margin-right: 0;
+    margin-left: 8px;
+}
+
+
+.shadow-color-control input[type="color"] {
+    flex-grow: 1;
+    height: 38px;
+}
+
+/* Custom CSS Textarea */
+.custom-css-controls legend {
+    /* Style similar to other legends if needed */
+}
+.custom-css-textarea {
+    width: 100%;
+    min-height: 120px;
+    border: 1px solid #dde3e9;
+    border-radius: 8px;
+    padding: 10px;
+    box-sizing: border-box;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace; /* Monospace font */
+    font-size: 0.9em; /* Slightly larger for readability */
+    line-height: 1.6; /* Increased line height */
+    background-color: #fdfdff;
+    resize: vertical;
+    margin-top: 8px; /* Space above textarea */
+}
+.custom-css-textarea:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0,123,255,.15);
+    outline: none;
+}
+
+
+#selected-element-editor hr {
+    border: none;
+    border-top: 1px solid #e9ecef;
+    margin: 25px 0;
+}
+
+
+#selected-element-editor .no-element-selected {
+    color: #6c757d;
+    text-align: center;
+    padding: 25px 15px;
+    font-style: italic;
+    font-size: 0.95em;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+/* Login form container */
+#login-form-container {
+    width: 400px;
+    min-height: 280px;
+    background-color: #ffffff;
+    padding: 35px;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+    color: #333a40;
+    transition: background-color 0.3s ease, background-image 0.3s ease, box-shadow 0.3s ease;
+}
+#login-form-container:hover {
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+}
+
 #login-form-container p:only-child {
+    color: #77838f;
+    font-size: 1.1em;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
     height: 100%;
-    min-height: 200px; /* Ensure placeholder takes space */
-    color: #77838f;
-    font-size: 1.1em;
+    min-height: 200px;
 }
 
-/* Styling for elements created by JS inside the form */
-.form-element-wrapper {
-    /* position: relative; (already set by JS) */
-    /* margin-bottom: 10px; (already set by JS) */
-    /* padding: 5px; (already set by JS) */
-    /* These styles in JS should be moved to CSS if possible in a future refactor */
+/* Form elements inside the form container */
+#login-form-container .form-element {
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    /* Default display for most form elements, can be overridden by specific types like text-block */
+    display: block;
+    width: 100%;
+    margin-bottom: 15px; /* Default margin for form elements */
 }
 
-.form-element { /* Class for actual input/button/label */
-    /* display: block; (JS) */
-    /* width: 100%; (JS) */
-    /* padding: 8px; (JS for inputs, adjust for buttons/labels) */
-    /* border: 1px solid #ccc; (JS) */
-    /* border-radius: 4px; (JS) */
-    /* box-sizing: border-box; (JS) */
-    font-size: 1em; /* Ensure form elements inherit base font size */
+#login-form-container .form-element:hover {
+    background-color: var(--hover-background-color, transparent);
+    color: var(--hover-text-color, inherit);
 }
 
-/* More specific styling for form elements */
-#login-form-container input.form-element,
-#login-form-container button.form-element,
-#login-form-container label.form-element {
-    padding: 12px 10px; /* Consistent padding */
-    border: 1px solid #dce1e5;
-    border-radius: 6px;
-    margin-bottom: 12px; /* Consistent spacing */
+
+#login-form-container input.form-element, /* Specific input elements */
+#login-form-container button.form-element { /* Specific button elements */
+    padding: 14px 12px;
+    border: 1px solid #d8dde3;
+    border-radius: 8px;
+    font-size: 1em;
 }
 
 #login-form-container input.form-element:focus {
     border-color: #007bff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    box-shadow: 0 0 0 3px rgba(0,123,255,.15);
     outline: none;
 }
 
 #login-form-container button.form-element {
-    background-color: #007bff; /* Default button color from JS */
+    background-color: #007bff;
     color: white;
     border: none;
     cursor: pointer;
     font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.1s ease, color 0.2s ease;
 }
-#login-form-container button.form-element:hover {
-    background-color: #0069d9;
-}
-
-#login-form-container label.form-element {
-    /* border: 1px dashed #ccc; (JS) */ /* Keep for edit indication */
-    background-color: transparent;
-    padding: 10px; /* Adjust padding for labels */
-    display: inline-block; /* Allow labels to size by content or be resized */
-    width: auto !important; /* Override JS width:100% for labels */
+#login-form-container button.form-element:active {
+    transform: translateY(0);
 }
 
-
-/* Resize Handle Styling */
-.resize-handle.bottom-right {
-    /* JS applies: position, width, height, bg-color, border, border-radius, bottom, right, cursor, z-index */
-    /* Ensure these are !important if JS styles conflict, or remove JS styling for these */
-    background-color: #007bff !important; /* Example */
-    border: 2px solid #fff !important;
+/* Text Block (formerly Label) specific styling */
+.text-block-element {
+    padding: 10px; /* Default padding */
+    border: 1px dashed #ced4da; /* Default border to show it's editable */
+    min-height: 20px;
+    line-height: 1.5; /* Good default for editable text */
+    width: auto !important; /* Allow it to size by content or be resized by handles */
+    display: inline-block !important; /* Allow it to respect text alignment of parent if centered, but also be resizable */
+}
+.form-element.text-block-element[contenteditable="true"]:focus {
+    outline: 1px solid #007bff; /* Simple focus outline */
+    box-shadow: 0 0 5px rgba(0,123,255,.25);
 }
 
-/* Icon Palette in Toolbar */
-#icon-palette {
+
+/* Checkbox and Radio specific styling */
+.checkbox-control,
+.radio-control {
     display: flex;
-    flex-wrap: wrap;
-    gap: 12px; /* Increased gap */
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    /* These containers get .form-element class, so they'll get block & width 100% by default */
+    /* Reset some of that if needed for inline-like behavior of the whole control */
+    width: auto !important; /* Let the flex contents define width */
+    display: inline-flex !important; /* Behave more like inline elements */
+    margin-bottom: 10px; /* Adjust their own margin */
+    border: none !important; /* Remove border from the container div */
+    padding: 0 !important; /* Remove padding from the container div */
+    background-color: transparent !important; /* Ensure container div is transparent */
+    box-shadow: none !important; /* Remove shadow from container div */
+
 }
 
+.checkbox-control input[type="checkbox"],
+.radio-control input[type="radio"] {
+    width: auto;
+    height: auto;
+    margin: 0;
+    border: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+    flex-shrink: 0;
+    cursor: pointer;
+    /* Reset padding if any inherited from a generic input.form-element rule */
+    padding: 0 !important;
+}
+
+.checkbox-control label,
+.radio-control label {
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+    width: auto !important;
+    display: inline-block !important;
+    cursor: text;
+    color: inherit;
+    line-height: 1.2;
+}
+
+.checkbox-control:hover label,
+.radio-control:hover label {
+    /* Hover for label text can be controlled by the --hover-text-color on the parent .form-element div */
+}
+
+
+/* Resize Handle */
+.resize-handle.bottom-right {
+    background-color: #007bff !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+    width: 14px !important;
+    height: 14px !important;
+    bottom: -7px !important;
+    right: -7px !important;
+    position: absolute;
+    cursor: nwse-resize;
+    z-index: 10;
+}
+
+/* Visual cue for selected element on canvas */
+.selected-element-wrapper {
+    outline: 2px dashed #0069d9;
+    outline-offset: 3px;
+    box-shadow: 0 0 12px rgba(0, 105, 217, 0.4);
+}
+
+
+/* Icon Palette & Page Icons */
 #icon-palette .icon-item {
-    width: 40px; /* Larger palette icons */
-    height: 40px;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    border: 1px solid #e0e6eb;
+    color: #495057;
+    cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 1px solid #e0e6eb;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
-    color: #495057; /* Default icon color in palette */
-}
-#icon-palette .icon-item svg { /* Ensure SVGs scale */
-    width: 60%;
-    height: 60%;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 #icon-palette .icon-item:hover {
-    background-color: #e9ecef;
+    border-color: #007bff;
+    background-color: #e6f2ff;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    border-color: #d1d9e0;
+}
+#icon-palette .icon-item svg {
+    width: 55%;
+    height: 55%;
 }
 
-/* Icons added to the page */
 .page-icon {
-    /* position: absolute; (JS) */
-    /* width: 50px; (JS) */
-    /* height: 50px; (JS) */
-    /* z-index: 1000; (JS) */
-    /* cursor: move; (JS) */
-    /* color: #5555dd; (JS) */
-    display: flex; /* For centering SVG if needed */
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    z-index: 1000;
+    cursor: move;
+    color: #5555dd;
+    display: flex;
     justify-content: center;
     align-items: center;
-    transition: transform 0.2s ease; /* For future interactions */
-}
-.page-icon svg {
-    width: 100%;
-    height: 100%;
+    transition: transform 0.2s ease, filter 0.2s ease;
 }
 .page-icon:hover {
-    transform: scale(1.1); /* Simple hover effect */
+    transform: scale(1.15);
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
 }
 
-/* Scrollbar styling (optional, for a more polished look) */
-#toolbar::-webkit-scrollbar, #canvas::-webkit-scrollbar {
-    width: 8px;
+/* Scrollbar styling */
+#editor-panel::-webkit-scrollbar,
+#elements-panel::-webkit-scrollbar,
+#canvas::-webkit-scrollbar {
+    width: 9px;
 }
-#toolbar::-webkit-scrollbar-track, #canvas::-webkit-scrollbar-track {
-    background: #f1f1f1;
+#editor-panel::-webkit-scrollbar-track,
+#elements-panel::-webkit-scrollbar-track,
+#canvas::-webkit-scrollbar-track {
+    background: #f0f4f7;
     border-radius: 10px;
 }
-#toolbar::-webkit-scrollbar-thumb, #canvas::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
+#editor-panel::-webkit-scrollbar-thumb,
+#elements-panel::-webkit-scrollbar-thumb,
+#canvas::-webkit-scrollbar-thumb {
+    background: #b8c0c8;
     border-radius: 10px;
+    border: 2px solid #f0f4f7;
 }
-#toolbar::-webkit-scrollbar-thumb:hover, #canvas::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
+#editor-panel::-webkit-scrollbar-thumb:hover,
+#elements-panel::-webkit-scrollbar-thumb:hover,
+#canvas::-webkit-scrollbar-thumb:hover {
+    background: #a0a8b0;
 }
+
+/* Styling for hover effect controls in editor panel */
+.hover-effect-controls.element-editor-group {
+    margin-top: 15px;
+}
+```

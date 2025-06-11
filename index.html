@@ -1,88 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl"> <!-- Added lang="fa" and dir="rtl" for Persian -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Form Editor</title>
+    <title>ویرایشگر فرم لاگین</title> <!-- Translated title -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="editor-container">
-        <aside id="toolbar">
-            <div class="toolbar-section">
-                <h3>Elements</h3>
-                <div id="draggable-elements">
-                    <!-- Draggable form elements will be listed here -->
-                    <div class="draggable-element" draggable="true" data-type="text-input">Text Input</div>
-                    <div class="draggable-element" draggable="true" data-type="password-input">Password Input</div>
-                    <div class="draggable-element" draggable="true" data-type="button">Button</div>
-                    <div class="draggable-element" draggable="true" data-type="label">Label</div>
+        <aside id="editor-panel"> <!-- Renamed from toolbar, will be on the left -->
+            <div class="toolbar-section" id="selected-element-settings-section">
+                <h3>تنظیمات المان منتخب</h3> <!-- Selected Element Settings -->
+                <div id="selected-element-editor">
+                    <p class="no-element-selected">الماني انتخاب نشده است.</p> <!-- No element selected -->
+                    <!-- Dynamic controls for selected element will go here -->
                 </div>
             </div>
             <div class="toolbar-section">
-                <h3>Page Settings</h3>
+                <h3>تنظیمات صفحه</h3> <!-- Page Settings -->
                 <div id="page-settings">
-                    <h4>Solid Color</h4>
-                    <label for="page-bg-color">Page BG Color:</label>
-                    <input type="color" id="page-bg-color" value="#eef1f5"> <!-- Match default body bg -->
+                    <h4>رنگ ثابت</h4> <!-- Solid Color -->
+                    <label for="page-bg-color">رنگ پس‌زمینه صفحه:</label>
+                    <input type="color" id="page-bg-color" value="#eef1f5">
 
-                    <h4 class="setting-subheader">Gradient</h4>
-                    <label for="page-gradient-color1">Color 1:</label>
+                    <h4 class="setting-subheader">گرادیانت</h4> <!-- Gradient -->
+                    <label for="page-gradient-color1">رنگ ۱:</label>
                     <input type="color" id="page-gradient-color1" value="#accbee">
-                    <label for="page-gradient-color2">Color 2:</label>
+                    <label for="page-gradient-color2">رنگ ۲:</label>
                     <input type="color" id="page-gradient-color2" value="#e7f0fd">
-                    <label for="page-gradient-angle">Angle (deg):</label>
+                    <label for="page-gradient-angle">زاویه (درجه):</label>
                     <input type="number" id="page-gradient-angle" value="90" min="0" max="360" step="1">
-                    <button id="apply-page-gradient" class="setting-button">Apply Page Gradient</button>
+                    <button id="apply-page-gradient" class="setting-button">اعمال گرادیانت صفحه</button>
 
-                    <h4 class="setting-subheader">Image</h4>
-                    <label for="page-bg-image">Upload Image:</label>
+                    <h4 class="setting-subheader">تصویر</h4> <!-- Image -->
+                    <label for="page-bg-image">آپلود تصویر:</label>
                     <input type="file" id="page-bg-image" accept="image/*">
-                    <!-- No apply button needed for file input, will apply on change.
-                         Advanced controls like size/repeat could be added here. -->
 
-                    <button id="clear-page-bg" class="setting-button clear-button" style="margin-top:10px;">Clear Page BG</button>
+                    <button id="clear-page-bg" class="setting-button clear-button" style="margin-top:10px;">پاک کردن پس‌زمینه صفحه</button>
                 </div>
             </div>
             <div class="toolbar-section">
-                <h3>Form Settings</h3>
+                <h3>تنظیمات فرم</h3> <!-- Form Settings -->
                 <div id="form-settings">
-                     <h4>Solid Color</h4>
-                     <label for="form-bg-color">Form BG Color:</label>
+                     <h4>رنگ ثابت</h4>
+                     <label for="form-bg-color">رنگ پس‌زمینه فرم:</label>
                      <input type="color" id="form-bg-color" value="#ffffff">
 
-                     <h4 class="setting-subheader">Gradient</h4>
-                     <label for="form-gradient-color1">Color 1:</label>
+                     <h4 class="setting-subheader">گرادیانت</h4>
+                     <label for="form-gradient-color1">رنگ ۱:</label>
                      <input type="color" id="form-gradient-color1" value="#f8f9fa">
-                     <label for="form-gradient-color2">Color 2:</label>
+                     <label for="form-gradient-color2">رنگ ۲:</label>
                      <input type="color" id="form-gradient-color2" value="#e9ecef">
-                     <label for="form-gradient-angle">Angle (deg):</label>
+                     <label for="form-gradient-angle">زاویه (درجه):</label>
                      <input type="number" id="form-gradient-angle" value="90" min="0" max="360" step="1">
-                     <button id="apply-form-gradient" class="setting-button">Apply Form Gradient</button>
+                     <button id="apply-form-gradient" class="setting-button">اعمال گرادیانت فرم</button>
 
-                     <h4 class="setting-subheader">Image</h4>
-                     <label for="form-bg-image">Upload Image:</label>
+                     <h4 class="setting-subheader">تصویر</h4>
+                     <label for="form-bg-image">آپلود تصویر:</label>
                      <input type="file" id="form-bg-image" accept="image/*">
 
-                     <button id="clear-form-bg" class="setting-button clear-button" style="margin-top:10px;">Clear Form BG</button>
+                     <button id="clear-form-bg" class="setting-button clear-button" style="margin-top:10px;">پاک کردن پس‌زمینه فرم</button>
                 </div>
             </div>
-             <div class="toolbar-section">
-                <h3>Icon Settings</h3>
-                <div id="icon-settings">
-                    <p>Click an icon to add:</p>
+            <div class="toolbar-section">
+                <h3>تنظیمات آیکن‌ها</h3> <!-- Icon Settings -->
+                <div id="icon-settings"> <!-- This was for adding icons to the page -->
+                    <p>برای افزودن، روی آیکن کلیک کنید:</p>
                     <div id="icon-palette">
-                        <!-- Icons will be added here by JS -->
+                        <!-- Icons from JS -->
                     </div>
                 </div>
             </div>
         </aside>
+
         <main id="canvas">
             <div id="login-form-container">
-                <!-- The user-designed login form will appear here -->
-                <p>Drag elements here to build your form</p>
+                <p>برای ساخت فرم، المان‌ها را به اینجا بکشید</p> <!-- Drag elements here to build your form -->
             </div>
         </main>
+
+        <aside id="elements-panel"> <!-- New panel for draggable elements on the right -->
+            <div class="toolbar-section">
+                <h3>المان‌ها</h3> <!-- Elements -->
+                <div id="draggable-elements">
+                    <div class="draggable-element" draggable="true" data-type="text-input">ورودی متن</div>
+                    <div class="draggable-element" draggable="true" data-type="password-input">ورودی پسورد</div>
+                    <div class="draggable-element" draggable="true" data-type="button">دکمه</div>
+                    <div class="draggable-element" draggable="true" data-type="text-block">بلوک متن</div>
+                    <div class="draggable-element" draggable="true" data-type="checkbox">چک‌باکس</div>
+                    <div class="draggable-element" draggable="true" data-type="radio">دکمه رادیویی</div>
+                    <!-- New elements will be added here later e.g. Checkbox, Radio -->
+                </div>
+            </div>
+             <!-- Maybe an "Add Custom Icon" section here later, per user feedback -->
+        </aside>
     </div>
     <script src="script.js"></script>
 </body>
