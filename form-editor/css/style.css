@@ -1,492 +1,739 @@
-body {
-    font-family: sans-serif;
+/* Global Resets and Base Styles */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
     margin: 0;
-    background-color: #f0f0f0;
-    display: flex;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    background-color: #F9FAFB; /* Figma-like light grey background */
+    color: #1F2937; /* Darker grey for text, more contrast */
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: flex; /* Keep centering for editor container */
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    color: #333;
 }
 
+/* Editor Container Styling */
 #editor-container {
     display: flex;
     width: 95%;
-    max-width: 1600px;
-    height: 80vh;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 1800px; /* Increased max-width for a more expansive feel */
+    height: 90vh;      /* Increased height */
+    background-color: #FFFFFF; /* Clean white background for the editor itself */
+    border-radius: 12px; /* Slightly larger, more modern radius */
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.07), 0 20px 50px -12px rgba(0, 0, 0, 0.1); /* Softer, more layered shadow */
     overflow: hidden;
+    border: 1px solid #E5E7EB; /* Subtle border */
 }
 
-#elements-panel, #properties-panel {
-    width: 250px;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-left: 1px solid #e0e0e0; /* For properties-panel */
-    border-right: 1px solid #e0e0e0; /* For elements-panel */
-    overflow-y: auto;
-}
-
-#elements-panel h2, #properties-panel h2 {
-    margin-top: 0;
-    font-size: 1.2em;
-    color: #555;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
-}
-
-#canvas {
-    flex-grow: 1;
-    padding: 20px;
-    background-color: #e9e9e9; /* Slightly different background for canvas */
+/* Panel Base Styles (will be refined in next steps) */
+#elements-panel,
+#properties-panel {
+    width: 280px; /* Slightly wider panels */
+    padding: 0; /* Remove padding, handle internally for more control */
+    background-color: #FFFFFF; /* Panels are white */
+    /* border-left: 1px solid #E5E7EB; For properties-panel */
+    /* border-right: 1px solid #E5E7EB; For elements-panel */
+    /* Borders will be handled by a single border on the canvas or panel edges */
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    /* justify-content: center; */ /* Commented out to allow content to flow from top */
 }
 
-#canvas h2 {
-    margin-top: 0;
-    color: #777;
-    font-size: 1em;
-    text-align: center;
+/* Canvas Styling (basic, will be refined) */
+#canvas {
+    flex-grow: 1;
+    padding: 20px; /* Keep padding for now */
+    background-color: #F3F4F6; /* Canvas background, slightly different from page body */
+    overflow-y: auto;
+    border-left: 1px solid #E5E7EB;
+    border-right: 1px solid #E5E7EB;
 }
 
-/* Basic styling for future elements for visibility */
-.form-element-placeholder {
-    border: 1px dashed #ccc;
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: #fff;
-    cursor: grab;
-    text-align: center;
+/* Typography - General Headings in Panels */
+#elements-panel h2, #elements-panel h3,
+#properties-panel h2, #properties-panel h3 {
+    font-weight: 600; /* Semibold */
+    color: #111827; /* Very dark grey / near black for headings */
+    padding: 16px 20px; /* Consistent padding for titles */
+    margin: 0;
+    font-size: 0.875rem; /* 14px if base is 16px */
+    border-bottom: 1px solid #E5E7EB; /* Separator for titles */
+    text-transform: uppercase; /* Figma/Elementor often use this for panel titles */
+    letter-spacing: 0.05em;
+}
+/* Remove specific title styling for elements-title if it's handled by the generic one above */
+#elements-panel h2#elements-title {
+    /* Use generic styling unless specific override needed */
 }
 
-/* Styling for the displayed form template */
-.form-template {
-    background-color: #ffffff;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    width: 100%; /* Default to full width of canvas area */
-    max-width: 400px; /* Max width for a typical login form */
-    margin: 20px auto; /* Center it in the canvas if canvas is wider */
-    border: 1px solid #ddd;
+
+/* --- Existing styles below this line will be reviewed/merged/removed --- */
+/* Keeping some of the functional CSS from previous steps, will review them against new design */
+
+/* Template Selector UI in elements-panel */
+#template-selector-container {
+    /* padding: 10px; */ /* Padding now handled by h3 and list items */
+    /* border-bottom: 1px solid #e0e0e0; */ /* Border now on h3 */
+    /* margin-bottom: 10px; */
+}
+/* #template-selector-container h3 is handled by generic panel h3 */
+
+.templates-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 20px; /* Padding for the list itself */
 }
 
-.form-template h3 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 1.5em;
-    color: #333;
-    text-align: center;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #555;
-}
-
-.form-group input[type="email"],
-.form-group input[type="password"] {
-    width: calc(100% - 20px); /* Account for padding */
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-.form-group button[type="submit"] {
+.template-select-button { /* Uses .editor-button styles too */
+    background-color: #4B5563; /* Darker Grey for buttons */
+    color: #FFFFFF;
+    font-size: 0.875rem; /* 14px */
+    padding: 10px 12px;
     width: 100%;
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: white;
+    box-sizing: border-box;
     border: none;
-    border-radius: 4px;
-    font-size: 1em;
+    border-radius: 6px;
+    text-align: right; /* Text align right for RTL */
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.2s ease;
+}
+html[dir="rtl"] .template-select-button { text-align: right; }
+html[dir="ltr"] .template-select-button { text-align: left; }
+
+
+.template-select-button:hover {
+    background-color: #374151; /* Darker on hover */
 }
 
-.form-group button[type="submit"]:hover {
-    background-color: #0056b3;
+/* Draggable Elements List */
+#draggable-elements-list {
+    padding: 12px 20px; /* Padding for the list */
+    flex-grow: 1; /* Allow it to take space if panel is flex column */
+    overflow-y: auto;
 }
-
-/* Styling for Draggable Palette Items */
 .palette-item {
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: #e9ecef;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    background-color: #F3F4F6; /* Light grey for items */
+    border: 1px solid #E5E7EB; /* Subtle border */
+    border-radius: 6px;
     cursor: grab;
-    text-align: center;
-    font-size: 0.9em;
+    text-align: right; /* For RTL */
+    font-size: 0.875rem; /* 14px */
+    color: #374151;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
 }
+html[dir="rtl"] .palette-item { text-align: right; }
+html[dir="ltr"] .palette-item { text-align: left; }
+
 
 .palette-item:hover {
-    background-color: #dee2e6;
+    background-color: #E5E7EB; /* Slightly darker on hover */
+    border-color: #D1D5DB;
 }
-
-.palette-item .form-element-placeholder {
-    border: none; /* Remove border from placeholder text if it's inside palette item */
+.palette-item .form-element-placeholder { /* This was for text inside, ensure it's styled well or icons are used */
+    border: none;
     padding: 0;
     margin-bottom: 0;
     background-color: transparent;
 }
 
-/* Styling for items once dropped on canvas (basic) */
-/* .draggable-item in canvas.js already has some styling from template */
-#canvas .form-group { /* Ensure dropped items also have some spacing */
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px dashed #adb5bd; /* Dashed border for newly dropped items */
-    background-color: #fff; /* Give them a background */
-}
-#canvas .form-group label,
-#canvas .form-group input,
-#canvas .form-group button {
-     /* Ensure they are block or styled appropriately if not already */
-}
 
-/* Styling for Selected Elements on Canvas */
-#canvas .form-group.selected {
-    border: 2px solid #007bff; /* Blue border for selected */
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+/* Properties Panel Styling */
+#properties-panel > p { /* Default message "select an element..." */
+    font-size: 0.875rem;
+    color: #6B7280; /* Medium grey */
+    text-align: center;
+    padding: 20px; /* Keep padding for this message */
+    border-bottom: 1px solid #E5E7EB; /* Add border if it's the first thing after title */
 }
-
-/* Styling for Properties Panel */
 #properties-panel .property-group {
-    margin-bottom: 15px;
-    padding: 10px;
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 4px;
+    margin: 16px 20px; /* Consistent margin */
+    padding: 16px;
+    background-color: #FFFFFF; /* White background for property groups */
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
 }
-
 #properties-panel .property-group label {
     display: block;
-    margin-bottom: 5px;
-    font-size: 0.9em;
-    color: #495057;
-    font-weight: bold;
+    margin-bottom: 6px;
+    font-size: 0.8125rem; /* 13px */
+    color: #374151; /* Dark grey for labels */
+    font-weight: 500; /* Medium weight */
 }
-
 #properties-panel .property-group input[type="text"],
-#properties-panel .property-group input[type="color"] { /* Added color type for future */
-    width: calc(100% - 16px); /* Account for padding */
-    padding: 8px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
+#properties-panel .property-group input[type="color"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #D1D5DB; /* Standard border */
+    border-radius: 6px;
     box-sizing: border-box;
+    font-size: 0.875rem;
+    color: #1F2937;
+    background-color: #FFFFFF;
 }
-#properties-panel > p { /* Styling for the default message */
-    font-size: 0.9em;
-    color: #6c757d;
-    text-align: center;
-    margin-top: 20px;
+#properties-panel .property-group input[type="text"]:focus,
+#properties-panel .property-group input[type="color"]:focus {
+    border-color: #3B82F6; /* Blue focus, common in modern UIs */
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    outline: none;
 }
 
-/* Export Button */
-.editor-button {
+
+/* Form Template Styles (on canvas) - Basic review */
+.form-template { /* This is the wrapper for loaded templates on canvas */
+    background-color: #ffffff;
+    padding: 30px; /* Increased padding for better spacing */
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Softer shadow for forms on canvas */
+    width: 100%;
+    max-width: 480px; /* Slightly increased max-width */
+    margin: 20px auto;
+    border: 1px solid #E5E7EB; /* Consistent border */
+}
+.form-template h3 { /* Titles within forms */
+    margin-top: 0;
+    margin-bottom: 24px;
+    font-size: 1.25rem; /* 20px */
+    color: #111827;
+    text-align: center;
+    font-weight: 600;
+}
+.form-group {
+    margin-bottom: 16px;
+}
+.form-group label {
     display: block;
-    width: calc(100% - 40px); /* Adjust to fit padding of properties-panel */
-    margin: 20px auto 10px;
+    margin-bottom: 6px;
+    font-weight: 500; /* Medium */
+    color: #374151; /* Dark grey */
+    font-size: 0.875rem; /* 14px */
+}
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="text"] { /* Ensure text type is also covered */
+    width: 100%; /* Use 100% and let padding be handled by box-sizing */
+    padding: 10px 12px;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 0.875rem;
+}
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus,
+.form-group input[type="text"]:focus {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    outline:none;
+}
+.form-group button[type="submit"], /* For buttons within forms */
+.form-group button[type="button"] {
+    width: 100%;
     padding: 10px 15px;
-    background-color: #28a745; /* Green */
+    background-color: #2563EB; /* Figma-like blue */
     color: white;
     border: none;
-    border-radius: 4px;
-    font-size: 1em;
+    border-radius: 6px;
+    font-size: 0.875rem; /* 14px */
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.form-group button[type="submit"]:hover,
+.form-group button[type="button"]:hover {
+    background-color: #1D4ED8; /* Darker blue */
+}
+
+/* Selected Element on Canvas */
+#canvas .form-group.selected {
+    border: 2px solid #3B82F6 !important; /* Figma blue for selection, !important to override dashed */
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.3); /* Softer glow */
+}
+
+
+/* Export Button in Properties Panel */
+.editor-button#export-button { /* More specific selector */
+    display: block;
+    width: auto; /* Let padding define width, or set specific width */
+    margin: 24px 20px 16px; /* Consistent with property group margins */
+    padding: 10px 15px;
+    background-color: #059669; /* Figma-like green */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
     cursor: pointer;
     text-align: center;
+    transition: background-color 0.2s ease;
+}
+.editor-button#export-button:hover {
+    background-color: #047857; /* Darker green */
 }
 
-.editor-button:hover {
-    background-color: #218838;
-}
-
-/* Export Modal Styles */
+/* Export Modal Styles (basic review, ensure consistency) */
 .modal-overlay {
-    display: none; /* Hidden by default */
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(17, 24, 39, 0.6); /* Tailwind coolGray-800 with opacity for dark overlay */
     justify-content: center;
     align-items: center;
     z-index: 1000;
     padding: 20px;
     box-sizing: border-box;
 }
-
 .modal-content {
-    background-color: #fff;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    background-color: #FFFFFF;
+    padding: 24px;
+    border-radius: 12px; /* Consistent with editor container */
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.07), 0 20px 50px -12px rgba(0, 0, 0, 0.15); /* Similar shadow */
     width: 90%;
     max-width: 800px;
-    max-height: 80vh;
+    max-height: 85vh; /* Slightly more height */
     display: flex;
     flex-direction: column;
     position: relative;
 }
-
 .modal-close-button {
     position: absolute;
-    top: 10px;
-    /* right: 15px; For LTR */
-    left: 15px; /* Adjusted for RTL */
-    font-size: 1.8em;
-    font-weight: bold;
-    color: #aaa;
+    top: 16px; /* Adjusted position */
+    right: 20px;
+    font-size: 1.5em; /* Smaller, cleaner X */
+    font-weight: normal; /* Not bold */
+    color: #6B7280; /* Medium grey */
     background: none;
     border: none;
     cursor: pointer;
+    line-height: 1; /* Ensure it's centered */
 }
-/* If you want specific for LTR uncomment this */
-/* html[dir="ltr"] .modal-close-button {
-    right: 15px;
-    left: auto;
-} */
+html[dir="rtl"] .modal-close-button { right: auto; left: 20px; }
+.modal-close-button:hover { color: #1F2937; }
 
-
-.modal-content h3 {
+.modal-content h3 { /* Modal Title */
     margin-top: 0;
-    margin-bottom: 15px;
-    color: #333;
+    margin-bottom: 16px;
+    color: #111827;
+    font-size: 1.125rem; /* 18px */
+    font-weight: 600;
 }
-
 .code-tabs {
     display: flex;
-    margin-bottom: 10px;
+    margin-bottom: 0; /* Remove margin, border will act as separator */
 }
-
 .tab-button {
-    padding: 10px 15px;
+    padding: 10px 16px;
     cursor: pointer;
-    border: 1px solid #ddd;
-    background-color: #f9f9f9;
-    /* margin-left: 5px; For LTR */
-    margin-right: 5px; /* For RTL */
-    border-bottom: none;
-    border-radius: 4px 4px 0 0;
+    border: 1px solid transparent; /* Make border transparent for inactive */
+    border-bottom: 1px solid #E5E7EB; /* Separator line for all tabs */
+    background-color: transparent;
+    margin-left: 0;
+    margin-right: 10px; /* Space between tabs */
+    font-size: 0.875rem;
+    color: #6B7280; /* Inactive tab text color */
+    border-radius: 0; /* Remove radius from individual tabs */
 }
-/* If you want specific for LTR uncomment this */
-/* html[dir="ltr"] .tab-button {
-    margin-left: 5px;
-    margin-right: 0;
-} */
+html[dir="rtl"] .tab-button { margin-left: 10px; margin-right: 0; }
+.tab-button:last-child { margin-right: 0; margin-left:0; }
 
 
 .tab-button.active {
-    background-color: #fff;
-    border-bottom: 1px solid #fff;
-    position: relative;
-    top: 1px;
+    background-color: transparent;
+    border-top-color: transparent;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    border-bottom: 2px solid #3B82F6; /* Blue bottom highlight for active tab */
+    color: #3B82F6; /* Active tab text color */
+    font-weight: 600; /* Bolder active tab */
 }
-
 .code-container {
-    display: none;
-    border: 1px solid #ddd;
-    padding:10px;
-    border-radius: 0 0 4px 4px;
+    border: 1px solid #E5E7EB; /* Border for the content area */
+    border-top: none; /* Remove top border as tabs handle separation */
+    padding: 16px;
+    border-radius: 0 0 8px 8px; /* Rounded bottom corners */
     flex-grow: 1;
-    display: flex;
+    display: none;
 }
-
 .code-container.active {
     display: flex;
 }
-
 .code-container textarea {
     width: 100%;
-    height: 300px;
     flex-grow: 1;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 10px;
-    font-family: monospace;
-    font-size: 0.9em;
+    border: 1px solid #D1D5DB; /* Consistent border */
+    border-radius: 6px;
+    padding: 12px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    font-size: 0.8125rem; /* 13px */
     resize: none;
     box-sizing: border-box;
-    direction: ltr; /* Ensure code textareas are LTR */
+    background-color: #F9FAFB; /* Slightly off-white for textarea */
+    color: #1F2937;
+}
+.code-container textarea:focus {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    outline: none;
 }
 
-/* Placeholder styles for new templates - can be greatly expanded */
+/* Theme-specific styles from previous step - ensure they are not broken */
+/* These should generally apply on top of the new base .form-template styles */
 
 /* Modern Minimal Theme */
-.modern-minimal-theme {
-    background-color: #fff;
-    text-align: center;
-    padding: 30px;
-    border-radius: 8px; /* Already has from .form-template */
-}
-.modern-minimal-theme .tagline {
-    font-size: 0.9em;
-    color: #666;
-    margin-bottom: 20px;
-}
+.modern-minimal-theme { background-color: #fff; text-align: center; padding: 30px; }
+.modern-minimal-theme .tagline { font-size: 0.9em; color: #6B7280; margin-bottom: 20px; }
 .modern-minimal-theme .form-group input[type="email"],
-.modern-minimal-theme .form-group input[type="password"] {
-    background-color: #f7f7f7;
-    border: 1px solid #eee;
-    padding: 12px 15px;
-}
-.modern-minimal-theme .options {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.85em;
-    margin-bottom: 20px;
-}
-.modern-minimal-theme .checkbox-label { font-weight: normal; color: #555; }
-.modern-minimal-theme .forgot-password { color: #007bff; text-decoration: none; }
-.modern-minimal-theme .button-primary { background-color: #007bff; padding: 12px; font-size: 1em; }
-.modern-minimal-theme .social-login p { font-size: 0.8em; color: #888; margin: 15px 0 10px; }
-.modern-minimal-theme .social-button {
-    padding: 8px 15px; border: 1px solid #ddd; border-radius: 4px; margin: 0 5px; background-color: #fff; cursor: pointer;
-}
-.modern-minimal-theme .form-footer { font-size: 0.9em; color: #666; margin-top: 20px; }
-.modern-minimal-theme .form-footer a { color: #007bff; text-decoration: none; font-weight: bold; }
-
+.modern-minimal-theme .form-group input[type="password"] { background-color: #F3F4F6; border: 1px solid #E5E7EB; padding: 12px 15px; }
+.modern-minimal-theme .options { display: flex; justify-content: space-between; align-items: center; font-size: 0.85em; margin-bottom: 20px; }
+.modern-minimal-theme .checkbox-label { font-weight: normal; color: #374151; }
+.modern-minimal-theme .forgot-password { color: #2563EB; text-decoration: none; }
+.modern-minimal-theme .button-primary { background-color: #2563EB; padding: 12px; font-size: 1em; }
+.modern-minimal-theme .social-login p { font-size: 0.8em; color: #6B7280; margin: 15px 0 10px; }
+.modern-minimal-theme .social-button { padding: 8px 15px; border: 1px solid #D1D5DB; border-radius: 6px; margin: 0 5px; background-color: #fff; cursor: pointer; color: #374151; }
+.modern-minimal-theme .form-footer { font-size: 0.9em; color: #6B7280; margin-top: 20px; }
+.modern-minimal-theme .form-footer a { color: #2563EB; text-decoration: none; font-weight: 500; }
 
 /* Image Focus Theme */
-.image-focus-theme {
-    display: flex;
-    max-width: 700px; /* Wider for two columns */
-    padding: 0 !important; /* Remove padding from .form-template, use !important if necessary */
-    overflow: hidden; /* Ensure rounded corners clip children */
-}
-.image-focus-theme .image-side {
-    width: 45%;
-    background-color: #007bff; /* Placeholder color */
-    color: white;
-    padding: 40px 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    /* background-image: url('your-image.jpg'); background-size: cover; */
-}
+.image-focus-theme { display: flex; max-width: 700px !important; padding: 0 !important; overflow: hidden; } /* Override .form-template padding */
+.image-focus-theme .image-side { width: 45%; background-color: #2563EB; color: white; padding: 40px 20px; display: flex; flex-direction: column; justify-content: center; text-align: center; }
 .image-focus-theme .image-side h2 { margin-top: 0; }
-.image-focus-theme .form-side {
-    width: 55%;
-    padding: 30px;
-    background-color: #fff;
-}
+.image-focus-theme .form-side { width: 55%; padding: 30px; background-color: #fff; }
 .image-focus-theme .form-side h3 { text-align: center; margin-bottom: 25px; }
 
-
 /* Dark Sleek Theme */
-.dark-sleek-theme {
-    background-color: #2c3e50; /* Dark background */
-    color: #ecf0f1; /* Light text */
-    padding: 30px;
-    border-radius: 8px;
-}
+.dark-sleek-theme { background-color: #1F2937; color: #F3F4F6; padding: 30px; } /* Tailwind coolGray-800, coolGray-100 */
+.dark-sleek-theme h3 { color: #F3F4F6; } /* Ensure headings also light */
 .dark-sleek-theme .form-header { text-align: center; margin-bottom: 25px; }
-.dark-sleek-theme .form-header h2 { margin-bottom: 5px; }
-.dark-sleek-theme .form-header p { font-size: 0.9em; color: #bdc3c7; }
-.dark-sleek-theme .form-group { position: relative; } /* For icon positioning */
+.dark-sleek-theme .form-header h2 { margin-bottom: 5px; color: #F3F4F6; }
+.dark-sleek-theme .form-header p { font-size: 0.9em; color: #9CA3AF; } /* coolGray-400 */
+.dark-sleek-theme .form-group { position: relative; }
+.dark-sleek-theme .form-group label { color: #D1D5DB; } /* coolGray-300 */
 .dark-sleek-theme .form-group input[type="email"],
-.dark-sleek-theme .form-group input[type="password"] {
-    background-color: #34495e;
-    border: 1px solid #4a6278;
-    color: #ecf0f1;
-    padding: 12px 15px;
-    padding-left: 35px; /* Space for icon (RTL) */
-    padding-right: 15px; /* Default padding */
-}
+.dark-sleek-theme .form-group input[type="password"] { background-color: #374151; border: 1px solid #4B5563; color: #F3F4F6; padding: 12px 15px; }
+html[dir="rtl"] .dark-sleek-theme .form-group input[type="email"],
+html[dir="rtl"] .dark-sleek-theme .form-group input[type="password"] { padding-left: 35px; padding-right: 15px; }
 html[dir="ltr"] .dark-sleek-theme .form-group input[type="email"],
-html[dir="ltr"] .dark-sleek-theme .form-group input[type="password"] {
-    padding-right: 35px; /* Space for icon (LTR) */
-    padding-left: 15px; /* Default padding */
-}
-.dark-sleek-theme .form-group input::placeholder { color: #95a5a6; }
-.dark-sleek-theme .input-icon {
-    position: absolute;
-    top: 50%;
-    left: 10px; /* For RTL */
-    transform: translateY(-50%);
-    color: #95a5a6;
-}
-html[dir="ltr"] .dark-sleek-theme .input-icon {
-    right: 10px;
-    left: auto;
-}
-.dark-sleek-theme .button-primary {
-    background-color: #3498db; /* Brighter blue for dark theme */
-    color: #fff;
-    padding: 12px;
-    font-size: 1em;
-    width: auto; flex-grow: 1;
-    margin-left: 10px; /* For RTL */
-}
-html[dir="ltr"] .dark-sleek-theme .button-primary {
-    margin-left: 0;
-    margin-right: 10px;
-}
-.dark-sleek-theme .button-primary:hover { background-color: #2980b9; }
+html[dir="ltr"] .dark-sleek-theme .form-group input[type="password"] { padding-right: 35px; padding-left: 15px; }
+.dark-sleek-theme .form-group input::placeholder { color: #9CA3AF; }
+.dark-sleek-theme .input-icon { position: absolute; top: 50%; transform: translateY(-50%); color: #9CA3AF; }
+html[dir="rtl"] .dark-sleek-theme .input-icon { left: 10px; }
+html[dir="ltr"] .dark-sleek-theme .input-icon { right: 10px; }
+.dark-sleek-theme .button-primary { background-color: #3B82F6; color: #fff; padding: 12px; font-size: 1em; width: auto; flex-grow: 1; }
+html[dir="rtl"] .dark-sleek-theme .button-primary { margin-left: 10px; }
+html[dir="ltr"] .dark-sleek-theme .button-primary { margin-right: 10px; }
+.dark-sleek-theme .button-primary:hover { background-color: #2563EB; }
 .dark-sleek-theme .action-group { display: flex; align-items: center; }
-.dark-sleek-theme .link-button {
-    color: #3498db; text-decoration: none; font-size: 0.9em;
-}
+.dark-sleek-theme .link-button { color: #3B82F6; text-decoration: none; font-size: 0.9em; }
 .dark-sleek-theme .link-button:hover { text-decoration: underline; }
 
-/* Template Selector UI */
+/* --- Step 2: Left Panel (#elements-panel) Redesign --- */
+
+/* Ensure panel titles are styled as per Step 1's generic panel h2, h3 rules */
+/* #elements-panel h3 (for "قالب‌ها") and #elements-panel h2#elements-title (for "عناصر") */
+/* should already be covered. We can add specific overrides if needed. */
+
+/* Template Selector Refinements */
 #template-selector-container {
-    padding: 0 10px 10px 10px; /* Adjusted padding to be only at bottom */
-    border-bottom: 1px solid #e0e0e0;
-    margin-bottom: 10px;
+    /* border-bottom is already on the h3 from generic styles */
 }
 
 #template-selector-container h3 {
-    margin-top: 0; /* Reset margin if it's the first child of elements-panel */
-    margin-bottom: 10px;
-    font-size: 1.1em;
-    color: #333;
-    padding-top: 0; /* No padding if it's first */
+    /* Generic panel h3 styles from Step 1 apply */
+    /* Can add specific margin if needed below title, before list */
+    margin-bottom: 8px; /* Space between title and template list */
 }
-
-/* Ensure the H3 for templates is not styled like a panel H2 if it's inside the panel padding */
-#elements-panel > #template-selector-container > h3 {
-    border-bottom: none;
-    padding-bottom: 0;
-}
-
 
 .templates-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px; /* Space between template buttons */
+    /* gap and padding already set in Step 1, can be adjusted if needed */
+    /* padding: 12px 20px; */ /* From Step 1 */
 }
 
-.template-select-button { /* Uses .editor-button styles too but overrides some */
-    background-color: #6c757d !important; /* Greyish, needs important to override green .editor-button */
-    font-size: 0.9em !important;
-    padding: 8px 10px !important;
-    width: 100% !important; /* Full width within its container */
-    box-sizing: border-box !important;
-    margin: 0 auto !important; /* Remove inherited margin from .editor-button */
+.template-select-button {
+    /* Base style from Step 1: #4B5563 background, white text, 0.875rem font, 10px 12px padding */
+    /* Further refinement: */
+    display: flex; /* Align icon and text if icons were to be added */
+    align-items: center;
+    /* Consider a slightly lighter background or different hover for distinction if needed */
+    /* background-color: #F9FAFB; */ /* Example: Lighter background */
+    /* color: #374151; */ /* Example: Darker text */
+    /* border: 1px solid #E5E7EB; */ /* Example: Add border */
+    /* transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease; */
 }
 
-.template-select-button:hover {
-    background-color: #5a6268 !important;
+/* .template-select-button:hover { */
+    /* background-color: #F3F4F6; */ /* Example: Lighter hover */
+    /* border-color: #D1D5DB; */
+/* } */
+
+
+/* Draggable Elements Palette Refinements */
+#elements-panel h2#elements-title {
+    /* Generic panel h2 styles from Step 1 apply */
+    /* Can add specific margin if needed below title, before list */
+    margin-bottom: 8px; /* Space between title and elements list */
 }
 
 #draggable-elements-list {
-    padding-top: 0px; /* No extra padding if H2 is separate */
+    /* padding: 12px 20px; */ /* From Step 1 */
+}
+
+.palette-item {
+    /* Base style from Step 1: #F3F4F6 background, #E5E7EB border, 0.875rem font */
+    /* Further refinement: */
+    display: flex; /* To align potential icons with text */
+    align-items: center;
+    padding: 12px 16px; /* Slightly more padding for a less cramped feel */
+    /* background-color: #FFFFFF; */ /* Make items white for a cleaner list? */
+    /* border: 1px solid #E5E7EB; */ /* Keep subtle border */
+    /* box-shadow: 0 1px 2px rgba(0,0,0,0.03); */ /* Subtle shadow for items */
+    /* transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease; */
+}
+
+/* .palette-item:hover { */
+    /* background-color: #F9FAFB; */ /* Very light grey hover */
+    /* border-color: #D1D5DB; */
+    /* box-shadow: 0 2px 4px rgba(0,0,0,0.05); */
+/* } */
+
+/* Example of adding a simple icon using ::before (limited without actual SVGs/images) */
+/* This is a placeholder concept. Real icons would need HTML changes or more complex CSS. */
+/*
+.palette-item[data-element-type="textInput"]::before {
+    content: "T"; /* Placeholder for Text Input Icon */
+/*    font-weight: bold;
+    margin-left: 8px; /* For RTL, should be margin-right */
+/*    margin-right: 12px; /* For LTR */
+/*    color: #6B7280;
+/*    font-size: 1.1em;
+/* }
+html[dir="rtl"] .palette-item[data-element-type="textInput"]::before {
+    margin-right: 8px;
+    margin-left: 12px;
+}
+*/
+
+/* Scrollbar Styling (Progressive Enhancement for Webkit browsers) */
+#elements-panel::-webkit-scrollbar,
+#properties-panel::-webkit-scrollbar, /* Also apply to properties panel */
+#canvas::-webkit-scrollbar { /* And canvas */
+    width: 8px; /* Thinner scrollbar */
+    height: 8px; /* For horizontal scroll if ever needed */
+}
+
+#elements-panel::-webkit-scrollbar-track,
+#properties-panel::-webkit-scrollbar-track,
+#canvas::-webkit-scrollbar-track {
+    background: transparent; /* Transparent track */
+}
+
+#elements-panel::-webkit-scrollbar-thumb,
+#properties-panel::-webkit-scrollbar-thumb,
+#canvas::-webkit-scrollbar-thumb {
+    background-color: #D1D5DB; /* Light grey thumb */
+    border-radius: 10px;
+    border: 2px solid transparent; /* Creates padding around thumb */
+    background-clip: content-box;
+}
+
+#elements-panel::-webkit-scrollbar-thumb:hover,
+#properties-panel::-webkit-scrollbar-thumb:hover,
+#canvas::-webkit-scrollbar-thumb:hover {
+    background-color: #9CA3AF; /* Darker grey on hover */
+}
+
+/* --- Step 3: Canvas Area (#canvas) Refinements --- */
+
+#canvas {
+    /* background-color: #F3F4F6; /* Set in Step 1 */
+    /* Subtle dot grid pattern for the canvas background */
+    background-image:
+        radial-gradient(circle at 1px 1px, rgba(0,0,0,0.08) 1px, transparent 0); /* Dot color and size */
+    background-size: 20px 20px; /* Spacing of the dots */
+    background-position: -1px -1px; /* Offset to align grid nicely */
+    position: relative; /* Needed for potential future rulers or absolute positioned elements */
+}
+
+/* Selected Element Styling Refinements */
+#canvas .form-group.selected {
+    /* border: 2px solid #3B82F6; */ /* Already set in Step 1, Figma blue */
+    /* box-shadow: 0 0 8px rgba(59, 130, 246, 0.3); */ /* Already set in Step 1 */
+    position: relative; /* Required for positioning pseudo-elements (control points) */
+    outline: 1px solid #3B82F6; /* Using outline for the main selection border */
+    border: none !important; /* Remove previous border if outline is used, !important to override existing dashed border */
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15); /* Softer, larger glow */
+}
+
+/* Visual Control Point Placeholders for selected elements */
+/* These are purely visual and do not add functionality in this step */
+#canvas .form-group.selected::before,
+#canvas .form-group.selected::after {
+    content: '';
+    position: absolute;
+    background-color: #FFFFFF; /* White control points */
+    border: 1px solid #3B82F6; /* Blue border for control points */
+    border-radius: 2px; /* Slightly rounded squares or make them circles */
+    width: 8px;
+    height: 8px;
+    box-shadow: 0 0 3px rgba(0,0,0,0.1);
+    z-index: 10; /* Ensure they are above the element's content */
+}
+
+/* Corner Control Points */
+#canvas .form-group.selected::before { /* Top-left and Bottom-right */
+    /* Top-left */
+    top: -5px;
+    left: -5px;
+}
+#canvas .form-group.selected::after { /* Top-right and Bottom-left are harder with just two pseudo-elements */
+    /* Bottom-right */
+    bottom: -5px;
+    right: -5px;
+}
+
+/* To add all 4 corner points, we'd need more pseudo-elements or actual child divs.
+   Let's try a different approach using multiple pseudo-elements on a wrapper if possible,
+   or just stick to two for now as a visual hint.
+   A simpler way for 4 corners with CSS is often to use box-shadow tricks or border-image,
+   but that's complex for this.
+
+   Alternative: use pseudo-elements for top-left and bottom-right,
+   and create two more using other pseudo-elements on a child or a more complex selector.
+   For simplicity in this step, let's refine to use a single style for all points
+   and accept we might need JS to add real divs for all 8 points later for functionality.
+
+   Let's make it simpler: just top-left and bottom-right for now as a visual cue.
+   If we want all 8 (4 corners, 4 mid-points), it's better done with JS adding small divs
+   when an element is selected, which can then be styled.
+   This CSS-only approach is limited.
+
+   Revisiting the selection styling:
+   The outline is good. The box-shadow is good.
+   The control points are tricky with CSS only for all 8.
+   Let's keep the ::before and ::after for two diagonal points as a visual hint.
+*/
+
+/* Optional: Visual Rulers (CSS Only - very basic and static) */
+/* This is a stretch goal and might be complex to get right and maintain. */
+/* Example for a top ruler - would need careful positioning and styling */
+/*
+#canvas::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 20px; // Ruler height
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #E5E7EB;
+    z-index: 5; // Below control points but above canvas items if needed
+    // Further styling for ruler markings would be very complex with CSS only (e.g. background gradients)
+}
+*/
+/* For now, omitting CSS-only rulers due to complexity and limited utility without JS. */
+/* The dot grid provides a better visual guide for now. */
+
+/* --- Step 4: Right Panel (#properties-panel) Redesign --- */
+
+/* Panel Title (#properties-panel h2) and default message (#properties-panel > p) */
+/* are assumed to be styled adequately by Step 1's generic panel and text styles. */
+/* We can add specific overrides if needed. */
+
+#properties-panel h2 {
+    /* Generic panel h2 styles from Step 1 apply */
+    /* Can add specific margin if needed below title, before property groups */
+    margin-bottom: 8px; /* Add some space before the first property group or default message */
+}
+
+#properties-panel > p { /* Default message "select an element..." */
+    /* Styles from Step 1: font-size: 0.875rem; color: #6B7280; text-align: center; padding: 20px; */
+    /* Ensure it's well-spaced if no element is selected */
+    margin-top: 16px; /* Additional spacing from title if it's the only content */
+    padding-left: 20px; /* Ensure padding consistency if panel has no global padding */
+    padding-right: 20px;
+}
+
+/* Property Groups */
+#properties-panel .property-group {
+    /* Base styles from Step 1: margin: 0 20px 16px; padding: 16px; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; */
+    /* Further refinement: */
+    /* Consider a slightly different background for visual grouping if needed, or keep white. */
+    /* background-color: #F9FAFB; */ /* Example: slightly off-white for groups */
+    /* box-shadow: 0 1px 2px rgba(0,0,0,0.02); */ /* Very subtle shadow for depth */
+    /* transition: box-shadow 0.2s ease; */
+}
+
+/* #properties-panel .property-group:hover { */
+    /* box-shadow: 0 2px 4px rgba(0,0,0,0.04); */ /* Slightly more shadow on hover */
+/* } */
+
+/* Property Labels */
+#properties-panel .property-group label {
+    /* Base styles from Step 1: display: block; margin-bottom: 6px; font-size: 0.8125rem (13px); color: #374151; font-weight: 500; */
+    /* Further refinement: */
+    line-height: 1.4; /* Improved readability */
+    /* text-transform: capitalize; */ /* Optional: Capitalize labels */
+}
+
+/* Input Controls - General Refinements */
+#properties-panel .property-group input[type="text"],
+#properties-panel .property-group input[type="color"],
+#properties-panel .property-group input[type="password"], /* Added for completeness if used in props */
+#properties-panel .property-group input[type="email"],   /* Added for completeness */
+#properties-panel .property-group input[type="number"]  /* Added for future */ {
+    /* Base styles from Step 1: width: 100%; padding: 10px 12px; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 0.875rem; ... */
+    /* Further refinement: */
+    /* height: 38px; */ /* Consistent height for inputs, adjust padding accordingly */
+    padding: 8px 12px; /* Adjust padding if height is set */
+    /* background-color: #F9FAFB; */ /* Slightly off-white background for inputs */
+    /* transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease; */
+}
+
+/* #properties-panel .property-group input[type="text"]:focus, ... { */
+    /* Focus styles from Step 1: border-color: #3B82F6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); */
+    /* background-color: #FFFFFF; */ /* Ensure background is white on focus */
+/* } */
+
+
+/* Styling for other potential form elements in properties panel if they were to be added */
+/*
+#properties-panel .property-group select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    background-color: #FFFFFF;
+    height: 38px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%208l5%205%205-5z%22%20fill%3D%22%236B7280%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px 16px;
+}
+#properties-panel .property-group select:focus {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    outline: none;
+}
+*/
+
+/* Ensure Export button is well-integrated if it's at the bottom of this panel */
+/* .editor-button#export-button was styled in Step 1, check its margin/placement */
+.editor-button#export-button {
+    /* margin: 24px 20px 16px; */ /* From Step 1, ensure it looks good with new panel padding */
+    /* If properties panel has no global padding now, button might need its own margin more carefully set */
 }
