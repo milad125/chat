@@ -7,7 +7,7 @@ function debounce(func, delay) {
             func.apply(this, args);
         }, delay);
     };
-    debounced.flush = function(...args) { // Added flush
+    debounced.flush = function(...args) {
         clearTimeout(timeoutId);
         func.apply(this, args);
     };
@@ -23,6 +23,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const pageBody = document.body;
     const editorContainer = document.querySelector('.editor-container');
 
+    // --- Start of Replacement Block for Global Objects ---
+    const formElementsConfig = {
+        'text-input': { name: 'ورودی متن', tag: 'input', type: 'text', placeholder: 'متن را وارد کنید' },
+        'email-input': { name: 'ورودی ایمیل', tag: 'input', type: 'email', placeholder: 'ایمیل را وارد کنید' },
+        'password-input': { name: 'ورودی رمز عبور', tag: 'input', type: 'password', placeholder: 'رمز عبور را وارد کنید' },
+        'submit-button': { name: 'دکمه ارسال', tag: 'button', type: 'submit', text: 'ارسال' },
+        'label': { name: 'لیبل', tag: 'label', text: 'متن لیبل' },
+        'checkbox': { name: 'چک‌باکس', tag: 'input', type: 'checkbox', label: 'گزینه چک‌باکس' },
+        'radio': { name: 'دکمه رادیویی', tag: 'input', type: 'radio', label: 'گزینه رادیویی', name: 'radio-group' },
+        'textarea': { name: 'ناحیه متنی', tag: 'textarea', placeholder: 'متن خود را اینجا وارد کنید' }
+    };
+
     const elementIconsSVG = {
         'text-input': '<svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="M2 5.5A1.5 1.5 0 013.5 4h13A1.5 1.5 0 0118 5.5v9A1.5 1.5 0 0116.5 16h-13A1.5 1.5 0 012 14.5v-9zM16.5 5H3.5a.5.5 0 00-.5.5v9a.5.5 0 00.5.5h13a.5.5 0 00.5-.5v-9a.5.5 0 00-.5-.5z"/><path d="M4 7h12v1H4V7zm0 3h8v1H4v-1z"/></svg>',
         'email-input': '<svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>',
@@ -34,6 +46,60 @@ document.addEventListener('DOMContentLoaded', () => {
         'textarea': '<svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="M2 5.5A1.5 1.5 0 013.5 4h13A1.5 1.5 0 0118 5.5v9A1.5 1.5 0 0116.5 16h-13A1.5 1.5 0 012 14.5v-9zM16.5 5H3.5a.5.5 0 00-.5.5v9a.5.5 0 00.5.5h13a.5.5 0 00.5-.5v-9a.5.5 0 00-.5-.5z"/><path d="M4 7h12v1H4V7zm0 2h12v1H4V9zm0 2h8v1H4v-1zm0 2h10v1H4v-1z"/></svg>'
     };
 
+    const formTemplates = {
+        'default': {
+            name: 'پیش‌فرض خالی',
+            pageBackground: { type: 'solid', color: '#f4f6f8' },
+            formBackground: { type: 'solid', color: '#fdfdfd', styles: {'padding':'20px'} },
+            elements: []
+        },
+        'classic-login': {
+            name: 'لاگین کلاسیک',
+            pageBackground: { type: 'solid', color: '#e9ecef' },
+            formBackground: { type: 'solid', color: '#ffffff', styles: { 'border-radius': '8px', 'box-shadow': 'var(--shadow-md)', 'padding':'25px'} },
+            elements: [
+                { type: 'label', text: 'خوش آمدید!', wrapperStyles: { 'margin-bottom': '5px'}, styles: { 'font-size': 'var(--font-size-xl)', 'font-weight': '700', color: 'var(--text-color-primary)', 'text-align': 'center', display:'block', width:'100%'} },
+                { type: 'label', text: 'برای ادامه وارد شوید', wrapperStyles: { 'margin-bottom': '20px'}, styles: { 'font-size': 'var(--font-size-base)', color: 'var(--text-color-secondary)', 'text-align': 'center', display:'block', width:'100%'} },
+                { type: 'email-input', placeholder: 'آدرس ایمیل', wrapperStyles: {'margin-bottom':'10px'}, styles: {'padding':'10px'} },
+                { type: 'password-input', placeholder: 'رمز عبور', wrapperStyles: {'margin-bottom':'15px'}, styles: {'padding':'10px'} },
+                { type: 'submit-button', text: 'ورود', wrapperStyles: { 'margin-top': '10px' }, styles: { 'background-color': 'var(--primary-color)', color: 'var(--text-on-primary)', width: '100%', padding:'12px', 'border':'none', 'border-radius':'var(--radius-md)'} }
+            ]
+        },
+        'dark-mode': {
+            name: 'حالت تاریک',
+            pageBackground: { type: 'solid', color: '#121212' },
+            formBackground: { type: 'solid', color: '#1e1e1e', styles: { 'border-radius': 'var(--radius-lg)', border: '1px solid #333', 'padding': '25px' } },
+            elements: [
+                { type: 'label', text: 'ورود امن', wrapperStyles: {'margin-bottom':'20px'}, styles: { 'font-size': 'var(--font-size-lg)', color: '#e0e0e0', 'text-align': 'center', display:'block', width:'100%' } },
+                { type: 'email-input', placeholder: 'ایمیل خود را وارد کنید', wrapperStyles: {'margin-bottom':'10px'}, styles: { 'background-color': '#2c2c2c', color: '#e0e0e0', 'border':'1px solid #444', 'padding':'10px', 'border-radius':'var(--radius-md)' } },
+                { type: 'password-input', placeholder: 'رمز عبور خود را وارد کنید', wrapperStyles: {'margin-bottom':'20px'}, styles: { 'background-color': '#2c2c2c', color: '#e0e0e0', 'border':'1px solid #444', 'padding':'10px', 'border-radius':'var(--radius-md)' } },
+                { type: 'submit-button', text: 'ورود به سیستم', wrapperStyles: {'margin-top':'10px'}, styles: { 'background-color': '#00acc1', color: 'var(--text-on-primary)', width: '100%', padding:'12px', 'border':'none', 'border-radius':'var(--radius-md)' } }
+            ]
+        },
+        'minimal-transparent': {
+            name: 'کمینه شفاف',
+            pageBackground: { type: 'gradient', gradient: 'linear-gradient(to right, #ff7e5f, #feb47b)' },
+            formBackground: { type: 'solid', color: 'rgba(255, 255, 255, 0.15)', styles: { 'backdrop-filter': 'blur(10px)', 'border-radius': 'var(--radius-lg)', 'padding': '30px', 'box-shadow': 'var(--shadow-lg)' } },
+            elements: [
+                { type: 'email-input', placeholder: 'ایمیل', wrapperStyles: {'margin-bottom':'15px'}, styles: { 'background-color': 'rgba(255,255,255,0.2)', 'border':'none', color:'white', 'border-radius':'var(--radius-md)', padding:'12px', 'placeholder-color':'rgba(255,255,255,0.7)'} },
+                { type: 'password-input', placeholder: 'رمز عبور', wrapperStyles: {'margin-bottom':'20px'}, styles: { 'background-color': 'rgba(255,255,255,0.2)', 'border':'none', color:'white', 'border-radius':'var(--radius-md)', padding:'12px', 'placeholder-color':'rgba(255,255,255,0.7)' } },
+                { type: 'submit-button', text: 'برو', wrapperStyles: {}, styles: { 'background-color': 'rgba(255,255,255,0.3)', color: 'white', 'border-radius':'var(--radius-md)', padding:'12px', width:'100%', 'font-weight':'700', 'border':'none' } }
+            ]
+        },
+        'corporate-blue': {
+            name: 'آبی شرکتی',
+            pageBackground: { type: 'solid', color: '#f0f4f8' },
+            formBackground: { type: 'solid', color: '#ffffff', styles: {'border-left': '5px solid var(--primary-color)', 'box-shadow': 'var(--shadow-md)', 'padding': '25px'} },
+            elements: [
+                { type: 'label', text: 'پورتال شرکت', wrapperStyles: {'margin-bottom':'25px'}, styles: { 'font-size': 'var(--font-size-lg)', color: 'var(--primary-color)', 'font-weight':'700' } },
+                { type: 'text-input', placeholder: 'نام کاربری', wrapperStyles: {'margin-bottom':'10px'}, styles: {'border-radius':'var(--radius-sm)', 'border':'1px solid var(--border-color)', 'padding':'10px'} },
+                { type: 'password-input', placeholder: 'رمز عبور', wrapperStyles: {'margin-bottom':'20px'}, styles: {'border-radius':'var(--radius-sm)', 'border':'1px solid var(--border-color)', 'padding':'10px'} },
+                { type: 'submit-button', text: 'ورود', wrapperStyles: {}, styles: { 'background-color': 'var(--primary-color)', color: 'var(--text-on-primary)', 'border-radius':'var(--radius-sm)', padding:'10px', width:'100%', 'border':'none'} }
+            ]
+        }
+    };
+    // --- End of Verified Replacement Block for Global Objects ---
+
     let currentBackgroundSettings = {
         page: { type: 'solid', color: '#f4f6f8', gradient: '', image: '' },
         form: { type: 'solid', color: '#fdfdfd', gradient: '', image: '' }
@@ -43,26 +109,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const LS_KEY = 'loginFormEditorState_v1';
 
-    const formElementsConfig = {
-        'text-input': { name: 'Text Input', tag: 'input', type: 'text', placeholder: 'Enter text' },
-        'email-input': { name: 'Email Input', tag: 'input', type: 'email', placeholder: 'Enter email' },
-        'password-input': { name: 'Password Input', tag: 'input', type: 'password', placeholder: 'Enter password' },
-        'submit-button': { name: 'Button', tag: 'button', type: 'submit', text: 'Submit' },
-        'label': { name: 'Label', tag: 'label', text: 'Label Text' },
-        'checkbox': { name: 'Checkbox', tag: 'input', type: 'checkbox', label: 'Checkbox option' },
-        'radio': { name: 'Radio Button', tag: 'input', type: 'radio', label: 'Radio option', name: 'radio-group' },
-        'textarea': { name: 'Textarea', tag: 'textarea', placeholder: 'Enter text here' },
-    };
-    const formTemplates = {
-        'default': { name: 'Default Blank', pageBackground: { type: 'solid', color: '#f4f6f8' }, formBackground: { type: 'solid', color: '#fdfdfd', styles: {'padding':'20px'} }, elements: [] },
-        'classic-login': { name: 'Classic Login', pageBackground: { type: 'solid', color: '#e9ecef' }, formBackground: { type: 'solid', color: '#ffffff', styles: { 'border-radius': '8px', 'box-shadow': '0 4px 15px rgba(0,0,0,0.1)', 'padding':'25px'} }, elements: [ { type: 'label', text: 'Welcome Back!', wrapperStyles: { 'margin-bottom': '5px'}, styles: { 'font-size': '24px', 'font-weight': 'bold', color: '#333', 'text-align': 'center', display:'block', width:'100%'} }, { type: 'label', text: 'Sign in to continue', wrapperStyles: { 'margin-bottom': '20px'}, styles: { 'font-size': '14px', color: '#777', 'text-align': 'center', display:'block', width:'100%'} }, { type: 'email-input', placeholder: 'Email address', wrapperStyles: {'margin-bottom':'10px'}, styles: {'padding':'10px'} }, { type: 'password-input', placeholder: 'Password', wrapperStyles: {'margin-bottom':'15px'}, styles: {'padding':'10px'} }, { type: 'submit-button', text: 'Login', wrapperStyles: { 'margin-top': '10px' }, styles: { 'background-color': '#007bff', color: 'white', width: '100%', padding:'12px', 'border':'none', 'border-radius':'4px'} } ] },
-        'dark-mode': { name: 'Dark Mode Login', pageBackground: { type: 'solid', color: '#121212' }, formBackground: { type: 'solid', color: '#1e1e1e', styles: { 'border-radius': '8px', border: '1px solid #333', 'padding': '25px' } }, elements: [ { type: 'label', text: 'Secure Login', wrapperStyles: {'margin-bottom':'20px'}, styles: { 'font-size': '22px', color: '#e0e0e0', 'text-align': 'center', display:'block', width:'100%' } }, { type: 'email-input', placeholder: 'Enter your email', wrapperStyles: {'margin-bottom':'10px'}, styles: { 'background-color': '#2c2c2c', color: '#e0e0e0', 'border':'1px solid #444', 'padding':'10px', 'border-radius':'4px' } }, { type: 'password-input', placeholder: 'Enter your password', wrapperStyles: {'margin-bottom':'20px'}, styles: { 'background-color': '#2c2c2c', color: '#e0e0e0', 'border':'1px solid #444', 'padding':'10px', 'border-radius':'4px' } }, { type: 'submit-button', text: 'Sign In', wrapperStyles: {'margin-top':'10px'}, styles: { 'background-color': '#00acc1', color: 'white', width: '100%', padding:'12px', 'border':'none', 'border-radius':'4px' } } ] },
-        'minimal-transparent': { name: 'Minimal Transparent', pageBackground: { type: 'gradient', gradient: 'linear-gradient(to right, #ff7e5f, #feb47b)' }, formBackground: { type: 'solid', color: 'rgba(255, 255, 255, 0.15)', styles: { 'backdrop-filter': 'blur(10px)', 'border-radius': '10px', 'padding': '30px', 'box-shadow': '0 0 20px rgba(0,0,0,0.2)' } }, elements: [ { type: 'email-input', placeholder: 'Email', wrapperStyles: {'margin-bottom':'15px'}, styles: { 'background-color': 'rgba(255,255,255,0.2)', 'border':'none', color:'white', 'border-radius':'5px', padding:'12px', 'placeholder-color':'rgba(255,255,255,0.7)'} }, { type: 'password-input', placeholder: 'Password', wrapperStyles: {'margin-bottom':'20px'}, styles: { 'background-color': 'rgba(255,255,255,0.2)', 'border':'none', color:'white', 'border-radius':'5px', padding:'12px', 'placeholder-color':'rgba(255,255,255,0.7)' } }, { type: 'submit-button', text: 'Go', wrapperStyles: {}, styles: { 'background-color': 'rgba(255,255,255,0.3)', color: 'white', 'border-radius':'5px', padding:'12px', width:'100%', 'font-weight':'bold', 'border':'none' } } ] },
-        'corporate-blue': { name: 'Corporate Blue', pageBackground: { type: 'solid', color: '#f0f4f8' }, formBackground: { type: 'solid', color: '#ffffff', styles: {'border-left': '5px solid #0d6efd', 'box-shadow': '0 2px 10px rgba(0,0,0,0.07)', 'padding': '25px'} }, elements: [ { type: 'label', text: 'Company Portal', wrapperStyles: {'margin-bottom':'25px'}, styles: { 'font-size': '22px', color: '#0d6efd', 'font-weight':'600' } }, { type: 'text-input', placeholder: 'Username', wrapperStyles: {'margin-bottom':'10px'}, styles: {'border-radius':'3px', 'border':'1px solid #ced4da', 'padding':'10px'} }, { type: 'password-input', placeholder: 'Password', wrapperStyles: {'margin-bottom':'20px'}, styles: {'border-radius':'3px', 'border':'1px solid #ced4da', 'padding':'10px'} }, { type: 'submit-button', text: 'Login', wrapperStyles: {}, styles: { 'background-color': '#0d6efd', color: 'white', 'border-radius':'3px', padding:'10px', width:'100%', 'border':'none'} } ] }
-    };
-
     const debouncedSaveState = debounce(saveStateToLocalStorage, 500);
 
+    // --- Start of Verified Replacement for saveStateToLocalStorage ---
     function saveStateToLocalStorage() {
         const formElementsData = [];
         formCanvas.querySelectorAll('.dropped-element-wrapper').forEach(wrapper => {
@@ -77,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return !config.type || config.type === actualElement.type;
             });
 
-            if (!elementTypeKey) { console.warn("Could not find config for element:", actualElement); return; }
+            if (!elementTypeKey) { console.warn("[SAVE] Could not find config for element:", actualElement); return; }
 
             const data = {
                 type: elementTypeKey,
@@ -87,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 text: undefined, placeholder: undefined, value: undefined, label: undefined, name: undefined
             };
 
-            if (actualElement.tagName === 'BUTTON' || actualElement.tagName === 'LABEL') {
+            if (actualElement.tagName === 'BUTTON' || (actualElement.tagName === 'LABEL' && !actualElement.querySelector('input'))) {
                 data.text = actualElement.textContent;
             } else if (actualElement.tagName === 'INPUT' && actualElement.type === 'submit') {
                 data.text = actualElement.value;
@@ -96,7 +145,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (actualElement.placeholder !== undefined) data.placeholder = actualElement.placeholder;
-            if (actualElement.value !== undefined && actualElement.tagName === 'INPUT' && actualElement.type !== 'submit' && actualElement.type !== 'button') {
+
+            if (actualElement.tagName === 'INPUT' && !['submit', 'button', 'checkbox', 'radio'].includes(actualElement.type) ) {
                 data.value = actualElement.value;
             }
             if (actualElement.name !== undefined) data.name = actualElement.name;
@@ -116,81 +166,323 @@ document.addEventListener('DOMContentLoaded', () => {
             icons: uploadedIcons
         };
         localStorage.setItem(LS_KEY, JSON.stringify(state));
-        console.log('State actually saved now.');
+        console.log('[SAVE] State actually saved now.');
     }
+    // --- End of Verified Replacement for saveStateToLocalStorage ---
 
+    // --- Start of Verified Replacement for loadStateFromLocalStorage ---
     function loadStateFromLocalStorage() {
-        const savedState = localStorage.getItem(LS_KEY);
+        console.log('[LOAD] Attempting to load state from LocalStorage...');
+        let savedState = localStorage.getItem(LS_KEY);
+
         if (!savedState) {
-            console.log('No saved state found. Applying default template.');
-            applyTemplate(currentAppliedTemplate || 'default', false);
+            console.log('[LOAD] No saved state found. Initializing with default template.');
+            currentAppliedTemplate = 'default';
+            try {
+                applyTemplate(currentAppliedTemplate, false);
+            } catch (e) {
+                console.error('[LOAD] Error applying default template during fresh init:', e);
+                formCanvas.innerHTML = '';
+                uploadedIcons = [];
+                currentBackgroundSettings = {
+                    page: JSON.parse(JSON.stringify(formTemplates['default'].pageBackground)),
+                    form: JSON.parse(JSON.stringify(formTemplates['default'].formBackground))
+                };
+            }
+            clearSettingsPanel();
+            updateBackground(pageBody, currentBackgroundSettings.page, true);
+            updateBackground(formCanvas, currentBackgroundSettings.form, true);
+            console.log('[LOAD] Default template applied and UI refreshed for fresh init.');
             return;
         }
 
         try {
+            console.log('[LOAD] Parsing saved state...');
             const state = JSON.parse(savedState);
-            currentBackgroundSettings = state.backgroundSettings || currentBackgroundSettings;
-            currentAppliedTemplate = state.template || 'default';
-            uploadedIcons = state.icons || [];
+            console.log('[LOAD] Saved state parsed successfully.');
 
-            if (state.formCanvas) {
+            console.log('[LOAD] Restoring background settings...');
+            currentBackgroundSettings = {
+                page: JSON.parse(JSON.stringify(formTemplates['default'].pageBackground)),
+                form: JSON.parse(JSON.stringify(formTemplates['default'].formBackground))
+            };
+            if (state?.backgroundSettings?.page) {
+                Object.assign(currentBackgroundSettings.page, state.backgroundSettings.page);
+            }
+            if (state?.backgroundSettings?.form) {
+                Object.assign(currentBackgroundSettings.form, state.backgroundSettings.form);
+                if (state.backgroundSettings.form.styles) {
+                     currentBackgroundSettings.form.styles = { ...(currentBackgroundSettings.form.styles || {}), ...state.backgroundSettings.form.styles };
+                }
+            }
+            console.log('[LOAD] Background settings restored.');
+
+            currentAppliedTemplate = state?.template ?? 'default';
+            console.log(`[LOAD] Current template set to: ${currentAppliedTemplate}`);
+
+            if (state?.formCanvas) {
+                console.log('[LOAD] Restoring form canvas dimensions and styles...');
                 formCanvas.style.width = state.formCanvas.width || '';
                 formCanvas.style.height = state.formCanvas.height || '';
-                if(state.formCanvas.styles) formCanvas.style.cssText = state.formCanvas.styles;
+                if (state.formCanvas.styles) {
+                    formCanvas.style.cssText = state.formCanvas.styles;
+                    console.log('[LOAD] Form canvas direct styles applied.');
+                } else {
+                    const formW = formCanvas.style.width;
+                    const formH = formCanvas.style.height;
+                    formCanvas.style.cssText = '';
+                    if(formW) formCanvas.style.width = formW;
+                    if(formH) formCanvas.style.height = formH;
+                    const defaultPadding = formTemplates[currentAppliedTemplate]?.formBackground?.styles?.padding ?? formTemplates['default']?.formBackground?.styles?.padding;
+                    if (defaultPadding) {
+                        formCanvas.style.padding = defaultPadding;
+                    }
+                    console.log('[LOAD] Form canvas styles reset, default padding applied if any.');
+                }
+            } else {
+                console.log('[LOAD] No formCanvas state found, applying default padding from template or absolute default.');
+                const defaultPadding = formTemplates[currentAppliedTemplate]?.formBackground?.styles?.padding ?? formTemplates['default']?.formBackground?.styles?.padding;
+                if (defaultPadding) {
+                    formCanvas.style.padding = defaultPadding;
+                }
             }
 
             formCanvas.innerHTML = '';
+            console.log('[LOAD] Form canvas cleared for repopulation.');
 
-            if (state.formElements && state.formElements.length > 0) {
-                state.formElements.forEach(elementData => {
-                    const wrapper = createFormElementFromConfig(elementData.type, elementData);
-                    if (wrapper) {
-                        wrapper.style.cssText = elementData.wrapperStyles || '';
-                        const actualElement = wrapper.querySelector(':scope > .dropped-form-element') ||
-                                              wrapper.querySelector(':scope > label > .dropped-form-element') ||
-                                              (wrapper.firstChild?.classList?.contains('dropped-form-element') ? wrapper.firstChild : null);
-                        if (actualElement) {
-                             actualElement.style.cssText = elementData.elementStyles || '';
+            console.log('[LOAD] Restoring form elements...');
+            if (state?.formElements && Array.isArray(state.formElements) && state.formElements.length > 0) {
+                state.formElements.forEach((elementData, index) => {
+                    try {
+                        if (!elementData || !elementData.type || !formElementsConfig[elementData.type]) {
+                            console.warn(`[LOAD] Skipping invalid or unknown element type at index ${index}:`, elementData);
+                            return;
                         }
-                        formCanvas.appendChild(wrapper);
-                        makeElementResizableAndDraggable(wrapper);
+                        console.log(`[LOAD] Restoring element ${index + 1}/${state.formElements.length}: Type ${elementData.type}`);
+                        const wrapper = createFormElementFromConfig(elementData.type, elementData);
+                        if (wrapper) {
+                            wrapper.style.cssText = elementData.wrapperStyles || '';
+                            const actualElement = wrapper.querySelector(':scope > .dropped-form-element') ||
+                                                  wrapper.querySelector(':scope > label > .dropped-form-element') ||
+                                                  (wrapper.firstChild?.classList?.contains('dropped-form-element') ? wrapper.firstChild : null);
+                            if (actualElement) {
+                                 actualElement.style.cssText = elementData.elementStyles || '';
+                            }
+                            formCanvas.appendChild(wrapper);
+                            makeElementResizableAndDraggable(wrapper);
+                        } else {
+                            console.warn(`[LOAD] Failed to create wrapper for element data at index ${index}:`, elementData);
+                        }
+                    } catch (e) {
+                        console.error(`[LOAD] Error restoring individual form element at index ${index} with data:`, elementData, e);
                     }
                 });
-            } else if (formTemplates[currentAppliedTemplate] && formTemplates[currentAppliedTemplate].elements.length > 0) {
+                console.log('[LOAD] Form elements restored.');
+            } else if (formTemplates[currentAppliedTemplate]?.elements?.length > 0) {
+                console.log(`[LOAD] No saved elements, but template '${currentAppliedTemplate}' has elements. Applying template elements.`);
                 applyTemplate(currentAppliedTemplate, true);
+            } else {
+                console.log('[LOAD] No saved elements and template has no elements.');
             }
 
-            uploadedIcons.forEach(iconData => {
-                if (iconData.onPage) {
-                    placeIconOnPage(iconData, iconData.x || 50, iconData.y || 50, iconData.width || 50, iconData.height || 50, true);
-                }
-            });
+            console.log('[LOAD] Restoring icons...');
+            uploadedIcons = Array.isArray(state?.icons) ? state.icons : [];
+            const iconsToPlace = uploadedIcons.filter(iconData => iconData?.onPage);
+            if (iconsToPlace.length > 0) {
+                iconsToPlace.forEach((iconData, index) => {
+                    try {
+                        if (iconData && iconData.src && iconData.id) {
+                            console.log(`[LOAD] Restoring on-page icon ${index + 1}/${iconsToPlace.length}: ID ${iconData.id}`);
+                            placeIconOnPage(
+                                iconData,
+                                parseFloat(iconData.x) || 50,
+                                parseFloat(iconData.y) || 50,
+                                parseFloat(iconData.width) || 50,
+                                parseFloat(iconData.height) || 50
+                            );
+                        } else {
+                            console.warn(`[LOAD] Skipping invalid on-page icon data at index ${index}:`, iconData);
+                        }
+                    } catch (e) {
+                        console.error(`[LOAD] Error restoring individual on-page icon at index ${index} with data:`, iconData, e);
+                    }
+                });
+                console.log('[LOAD] On-page icons restored.');
+            } else {
+                console.log('[LOAD] No on-page icons to restore.');
+            }
 
-            console.log('State loaded.');
+            console.log('[LOAD] State loaded successfully from LocalStorage.');
+
         } catch (error) {
-            console.error('Error loading state:', error);
+            console.error('[LOAD] CRITICAL error loading state from LocalStorage or during initial parsing:', error);
             localStorage.removeItem(LS_KEY);
-            applyTemplate('default', false);
+
+            uploadedIcons = [];
+            currentBackgroundSettings = {
+                page: JSON.parse(JSON.stringify(formTemplates['default'].pageBackground)),
+                form: JSON.parse(JSON.stringify(formTemplates['default'].formBackground))
+            };
+            currentAppliedTemplate = 'default';
+            formCanvas.innerHTML = '';
+
+            try {
+                console.log('[LOAD-FALLBACK] Applying default template after critical error.');
+                applyTemplate('default', true);
+            } catch (e) {
+                console.error('[LOAD-FALLBACK] Error applying default template after critical error:', e);
+            }
+        } finally {
+            console.log('[LOAD] Executing finally block: refreshing UI.');
+            try {
+                clearSettingsPanel();
+                const templateSelect = document.getElementById('template-select');
+                if(templateSelect) {
+                    templateSelect.value = currentAppliedTemplate;
+                }
+                console.log('[LOAD] UI refreshed in finally block.');
+            } catch (e) {
+                console.error('[LOAD] Error in finally block during UI refresh:', e);
+            }
         }
-        clearSettingsPanel();
-        if(document.getElementById('template-select') && currentAppliedTemplate){
-            document.getElementById('template-select').value = currentAppliedTemplate;
+    }
+    // --- End of Verified Replacement for loadStateFromLocalStorage ---
+
+    // --- Start of Verified Replacement for applyTemplate ---
+    function applyTemplate(templateKey, isLoadingState = false) {
+        currentAppliedTemplate = templateKey;
+        const template = formTemplates[templateKey];
+        if (!template) {
+            console.warn(`[TEMPLATE] Template key "${templateKey}" not found. Applying default.`);
+            if (templateKey !== 'default') {
+                applyTemplate('default', isLoadingState);
+            }
+            return;
         }
+
+        console.log(`[TEMPLATE] Applying template: ${template.name}, isLoadingState: ${isLoadingState}`);
+        formCanvas.innerHTML = '';
+        if(selectedElementWrapper) {selectedElementWrapper.classList.remove('selected'); selectedElementWrapper = null;}
+        if(selectedIconElement) {selectedIconElement.classList.remove('selected-icon'); selectedIconElement = null;}
+
+        const mainSettingsTitle = settingsPanelContent.querySelector('h2');
+        const templateContainer = document.getElementById('template-select-container');
+        const iconContainer = document.getElementById('icon-settings-container');
+        const saveBtn = document.getElementById('save-editor-state-button');
+        const previewBtn = document.getElementById('preview-form-button');
+
+        settingsPanelContent.innerHTML = '';
+        if(mainSettingsTitle) settingsPanelContent.appendChild(mainSettingsTitle); else { const t = document.createElement('h2'); t.textContent = 'تنظیمات ویرایشگر'; settingsPanelContent.appendChild(t); }
+        if(saveBtn) settingsPanelContent.appendChild(saveBtn);
+        if(previewBtn) settingsPanelContent.appendChild(previewBtn);
+        if(templateContainer) settingsPanelContent.appendChild(templateContainer); else populateTemplateSelector();
+        if(iconContainer) settingsPanelContent.appendChild(iconContainer); else populateIconUploader();
+
+        currentBackgroundSettings.page = JSON.parse(JSON.stringify(formTemplates['default'].pageBackground));
+        if(template.pageBackground) Object.assign(currentBackgroundSettings.page, template.pageBackground);
+
+        currentBackgroundSettings.form = JSON.parse(JSON.stringify(formTemplates['default'].formBackground));
+        if(template.formBackground) {
+            Object.assign(currentBackgroundSettings.form, template.formBackground);
+            currentBackgroundSettings.form.styles = template.formBackground.styles ? JSON.parse(JSON.stringify(template.formBackground.styles)) : {};
+        } else {
+            currentBackgroundSettings.form.styles = {};
+        }
+
         updateBackground(pageBody, currentBackgroundSettings.page, true);
         updateBackground(formCanvas, currentBackgroundSettings.form, true);
-    }
 
-    // Populate Elements Panel - MODIFIED FOR ICONS
+        populateBackgroundSettings();
+
+        template.elements.forEach(elementConfig => {
+            if (!elementConfig || !elementConfig.type || !formElementsConfig[elementConfig.type]) {
+                console.warn('[TEMPLATE] Skipping invalid element config in template:', elementConfig);
+                return;
+            }
+            const newElementWrapper = createFormElementFromConfig(elementConfig.type, elementConfig);
+            if(newElementWrapper) {
+                formCanvas.appendChild(newElementWrapper);
+                makeElementResizableAndDraggable(newElementWrapper);
+            }
+        });
+
+        const currentTemplateSelect = document.getElementById('template-select');
+        if(currentTemplateSelect) currentTemplateSelect.value = templateKey;
+
+        if(!isLoadingState) {
+            console.log("[TEMPLATE] Calling debouncedSaveState after applying template.");
+            debouncedSaveState();
+        }
+    }
+    // --- End of Verified Replacement for applyTemplate ---
+
+    // --- Start of Verified Replacement for createFormElementFromConfig ---
+    function createFormElementFromConfig(elementTypeKey, config) {
+        const baseConfig = formElementsConfig[elementTypeKey];
+        if (!baseConfig) { console.warn(`[CREATE_ELEMENT] Unknown element type key: ${elementTypeKey}`); return null; }
+
+        const newElementWrapper = document.createElement('div');
+        newElementWrapper.classList.add('dropped-element-wrapper');
+        if (config.wrapperStyles && typeof config.wrapperStyles === 'string') newElementWrapper.style.cssText = config.wrapperStyles;
+        else if (config.wrapperStyles) Object.assign(newElementWrapper.style, config.wrapperStyles);
+
+        const actualElement = document.createElement(baseConfig.tag);
+        actualElement.classList.add('dropped-form-element');
+        if (baseConfig.type) actualElement.setAttribute('type', baseConfig.type);
+
+        actualElement.id = config.id ?? `el-${Date.now().toString(36)}-${Math.random().toString(36).substr(2,5)}`;
+        actualElement.setAttribute('placeholder', config.placeholder ?? baseConfig.placeholder ?? '');
+
+        if (baseConfig.tag === 'button') {
+            actualElement.textContent = config.text ?? baseConfig.text ?? 'دکمه';
+        } else if (baseConfig.tag === 'label' && !(baseConfig.type === 'checkbox' || baseConfig.type === 'radio')) {
+            actualElement.textContent = config.text ?? baseConfig.text ?? 'لیبل';
+        } else if (baseConfig.tag === 'textarea') {
+            actualElement.value = config.value ?? config.text ?? '';
+        } else if (actualElement.tagName === 'INPUT' && config.value !== undefined && !['checkbox', 'radio', 'submit', 'button'].includes(baseConfig.type)) {
+            actualElement.value = config.value;
+        } else if (actualElement.tagName === 'INPUT' && baseConfig.type === 'submit'){
+             actualElement.value = config.text ?? baseConfig.text ?? 'ارسال';
+        }
+
+        if (config.name && actualElement.name !== undefined) actualElement.name = config.name;
+
+        if (config.elementStyles && typeof config.elementStyles === 'string') actualElement.style.cssText = config.elementStyles;
+        else if (config.styles) Object.assign(actualElement.style, config.styles);
+
+        if (actualElement.style.getPropertyValue('--placeholder-color') && config.styles?.['placeholder-color']) {
+            actualElement.style.setProperty('--placeholder-color', config.styles['placeholder-color']);
+        }
+
+        if (baseConfig.tag === 'input' && (baseConfig.type === 'checkbox' || baseConfig.type === 'radio')) {
+            const labelElement = document.createElement('label');
+            const span = document.createElement('span');
+            span.textContent = " " + (config.label ?? baseConfig.label ?? elementTypeKey);
+            if (actualElement.style.color) span.style.color = actualElement.style.color;
+
+            labelElement.appendChild(actualElement);
+            labelElement.appendChild(span);
+            if (baseConfig.name && baseConfig.type === 'radio') {
+                actualElement.setAttribute('name', (config.name ?? baseConfig.name ?? `radio-group-${Date.now()}`));
+            }
+            newElementWrapper.appendChild(labelElement);
+        } else {
+            newElementWrapper.appendChild(actualElement);
+        }
+        return newElementWrapper;
+    }
+    // --- End of Verified Replacement for createFormElementFromConfig ---
+
+    // Populate Elements Panel
     for (const id in formElementsConfig) {
         const config = formElementsConfig[id];
         const elDiv = document.createElement('div');
         elDiv.classList.add('form-element');
         elDiv.setAttribute('data-element-type', id);
 
-        const iconHTML = elementIconsSVG[id] || '<svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z"/></svg>'; // Default icon
+        const iconHTML = elementIconsSVG[id] || '<svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z"/></svg>';
         const nameSpan = document.createElement('span');
         nameSpan.textContent = config.name;
-        // nameSpan.style.marginLeft = 'var(--space-2)'; // REMOVED - handle spacing with CSS on SVG
 
         elDiv.innerHTML = iconHTML;
         elDiv.appendChild(nameSpan);
@@ -240,50 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { element.style.transition = originalTransition;}, 0);
         if(!skipSave) debouncedSaveState();
     }
-    function createFormElementFromConfig(elementTypeKey, config) {
-        const baseConfig = formElementsConfig[elementTypeKey];
-        if (!baseConfig) { console.warn(`Unknown element type key: ${elementTypeKey}`); return null; }
-        const newElementWrapper = document.createElement('div');
-        newElementWrapper.classList.add('dropped-element-wrapper');
-        if (config.wrapperStyles && typeof config.wrapperStyles === 'string') newElementWrapper.style.cssText = config.wrapperStyles;
-        else if (config.wrapperStyles) Object.assign(newElementWrapper.style, config.wrapperStyles);
 
-        const actualElement = document.createElement(baseConfig.tag);
-        actualElement.classList.add('dropped-form-element');
-        if (baseConfig.type) actualElement.setAttribute('type', baseConfig.type);
-
-        actualElement.id = config.id || '';
-        actualElement.setAttribute('placeholder', config.placeholder || baseConfig.placeholder || '');
-        if (baseConfig.tag === 'button') actualElement.textContent = config.text || baseConfig.text || 'Button';
-        else if (baseConfig.tag === 'label') actualElement.textContent = config.text || baseConfig.text || 'Label';
-        else if (baseConfig.tag === 'textarea') actualElement.value = config.value || config.text || '';
-        else if (actualElement.tagName === 'INPUT' && config.value !== undefined) actualElement.value = config.value;
-
-        if (config.name && actualElement.name !== undefined) actualElement.name = config.name;
-
-        if (config.elementStyles && typeof config.elementStyles === 'string') actualElement.style.cssText = config.elementStyles;
-        else if (config.styles) Object.assign(actualElement.style, config.styles);
-
-        if (config.styles && config.styles['placeholder-color'] && actualElement.style.setProperty) {
-            actualElement.style.setProperty('--placeholder-color', config.styles['placeholder-color']);
-        }
-
-        if (baseConfig.tag === 'input' && (baseConfig.type === 'checkbox' || baseConfig.type === 'radio')) {
-            const labelElement = document.createElement('label');
-            const span = document.createElement('span');
-            span.textContent = " " + (config.label || baseConfig.label || elementTypeKey);
-            if (actualElement.style.color) span.style.color = actualElement.style.color;
-
-            labelElement.appendChild(actualElement); labelElement.appendChild(span);
-            if (baseConfig.name && baseConfig.type === 'radio') {
-                actualElement.setAttribute('name', (config.name || baseConfig.name || `radio-group-${Date.now()}`));
-            }
-            newElementWrapper.appendChild(labelElement);
-        } else {
-            newElementWrapper.appendChild(actualElement);
-        }
-        return newElementWrapper;
-    }
     function populateElementSettings(elementWrapper) {
         settingsPanelContent.innerHTML = '<h2>Element Settings</h2>';
         if(selectedElementWrapper && selectedElementWrapper !== elementWrapper) selectedElementWrapper.classList.remove('selected');
@@ -343,53 +592,6 @@ document.addEventListener('DOMContentLoaded', () => {
         for(const o in formTemplates){const i=document.createElement('option');i.value=o;i.textContent=formTemplates[o].name;t.appendChild(i)}
         t.value=currentAppliedTemplate||"";
     }
-    function applyTemplate(templateKey, isLoadingState = false) {
-        currentAppliedTemplate = templateKey;
-        const template = formTemplates[templateKey];
-        if (!template) {
-            console.warn(`Template with key "${templateKey}" not found. Applying default.`);
-            if (templateKey !== 'default') {
-                applyTemplate('default', isLoadingState);
-            }
-            return;
-        }
-
-        formCanvas.innerHTML = '';
-        if(selectedElementWrapper) {selectedElementWrapper.classList.remove('selected'); selectedElementWrapper = null;}
-        if(selectedIconElement) {selectedIconElement.classList.remove('selected-icon'); selectedIconElement = null;}
-
-        const mainTitle = settingsPanelContent.querySelector('h2');
-        const templateContainer = document.getElementById('template-select-container');
-        const iconContainer = document.getElementById('icon-settings-container');
-
-        settingsPanelContent.innerHTML = '';
-        if(mainTitle) settingsPanelContent.appendChild(mainTitle);
-        if(templateContainer) settingsPanelContent.appendChild(templateContainer); else populateTemplateSelector();
-        if(iconContainer) settingsPanelContent.appendChild(iconContainer); else populateIconUploader();
-
-        currentBackgroundSettings.form = JSON.parse(JSON.stringify({...formTemplates['default'].formBackground, ...(template.formBackground || {})}));
-        currentBackgroundSettings.form.styles = template.formBackground?.styles ? JSON.parse(JSON.stringify(template.formBackground.styles)) : {};
-
-        currentBackgroundSettings.page = JSON.parse(JSON.stringify({...formTemplates['default'].pageBackground, ...(template.pageBackground || {})}));
-
-        updateBackground(pageBody, currentBackgroundSettings.page, isLoadingState);
-        updateBackground(formCanvas, currentBackgroundSettings.form, isLoadingState);
-
-        populateBackgroundSettings();
-
-        template.elements.forEach(elementConfig => {
-            const newElementWrapper = createFormElementFromConfig(elementConfig.type, elementConfig);
-            if(newElementWrapper) {
-                formCanvas.appendChild(newElementWrapper);
-                makeElementResizableAndDraggable(newElementWrapper);
-            }
-        });
-
-        const currentTemplateSelect = document.getElementById('template-select');
-        if(currentTemplateSelect) currentTemplateSelect.value = templateKey;
-        console.log(`Applied template: ${template.name}`);
-        if(!isLoadingState) debouncedSaveState();
-    }
 
     function clearSettingsPanel() {
         if(selectedElementWrapper) selectedElementWrapper.classList.remove('selected');
@@ -407,7 +609,7 @@ document.addEventListener('DOMContentLoaded', () => {
         saveButton.id = 'save-editor-state-button';
         saveButton.textContent = 'ذخیره تغییرات';
         saveButton.addEventListener('click', () => {
-            saveStateToLocalStorage(); // Direct call for explicit save
+            saveStateToLocalStorage();
             const originalText = saveButton.textContent;
             saveButton.textContent = 'ذخیره شد!';
             saveButton.classList.add('saved');
@@ -740,3 +942,707 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 [end of front/script.js]
+
+[end of front/script.js]
+
+[end of front/script.js]
+
+[start of front/style.css]
+@font-face {
+    font-family: 'IRANYekanWeb';
+    font-style: normal;
+    font-weight: 300; /* Light */
+    src: local('IRANYekanWebFaNum-Light'),
+         url('/fonts/woff2/IRANYekanWebFaNum-Light.woff2') format('woff2'),
+         url('/fonts/woff/IRANYekanWebFaNum-Light.woff') format('woff');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'IRANYekanWeb';
+    font-style: normal;
+    font-weight: 400; /* Regular */
+    src: local('IRANYekanWebFaNum-Regular'),
+         url('/fonts/woff2/IRANYekanWebFaNum-Regular.woff2') format('woff2'),
+         url('/fonts/woff/IRANYekanWebFaNum-Regular.woff') format('woff');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'IRANYekanWeb';
+    font-style: normal;
+    font-weight: 500; /* Medium */
+    src: local('IRANYekanWebFaNum-Medium'),
+         url('/fonts/woff2/IRANYekanWebFaNum-Medium.woff2') format('woff2'),
+         url('/fonts/woff/IRANYekanWebFaNum-Medium.woff') format('woff');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'IRANYekanWeb';
+    font-style: normal;
+    font-weight: 600; /* SemiBold/DemiBold */
+    src: local('IRANYekanWebFaNum-DemiBold'),
+         url('/fonts/woff2/IRANYekanWebFaNum-DemiBold.woff2') format('woff2'),
+         url('/fonts/woff/IRANYekanWebFaNum-DemiBold.woff') format('woff');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'IRANYekanWeb';
+    font-style: normal;
+    font-weight: 700; /* Bold */
+    src: local('IRANYekanWebFaNum-Bold'),
+         url('/fonts/woff2/IRANYekanWebFaNum-Bold.woff2') format('woff2'),
+         url('/fonts/woff/IRANYekanWebFaNum-Bold.woff') format('woff');
+    font-display: swap;
+}
+
+/* Reset basic styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Color Palette - Inspired by modern UI tools */
+    --primary-color: #4A90E2; /* A modern, friendly blue */
+    --primary-color-light: #7BAAF7;
+    --primary-color-dark: #3A7BC8;
+    --primary-color-light-rgb: 123, 170, 247; /* Added for box-shadow */
+
+    --secondary-color: #F7F9FC; /* Light gray for panel backgrounds */
+    --tertiary-color: #E4E8F0; /* Slightly darker gray for borders, inputs */
+
+    --text-color-primary: #2D3748; /* Dark gray for primary text */
+    --text-color-secondary: #4A5568; /* Medium gray for secondary text, labels */
+    --text-color-light: #718096;   /* Lighter gray for placeholders, help text */
+    --text-on-primary: #FFFFFF;    /* Text color on primary background */
+
+    --accent-success: #48BB78;    /* Green for success messages */
+    --accent-error: #F56565;      /* Red for error messages */
+    --accent-warning: #ECC94B;   /* Yellow for warnings */
+
+    --background-main: #FFFFFF;   /* Main workspace background (form canvas area) */
+    --background-app: #EDF2F7;    /* Overall app background */
+    --border-color: var(--tertiary-color); /* Default border color */
+    --input-background: #FFFFFF;
+
+    /* Shadows - subtle and layered */
+    --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+
+    /* Typography */
+    --font-primary: 'IRANYekanWeb', 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    --font-secondary: 'IRANYekanWeb', 'Roboto', sans-serif;
+
+    --font-size-base: 14px;
+    --font-size-sm: 13px;
+    --font-size-xs: 12px;
+    --font-size-md: 16px;
+    --font-size-lg: 18px;
+    --font-size-xl: 20px;
+    --font-size-title: 24px;
+
+    --line-height-base: 1.65; /* Updated */
+    --line-height-tight: 1.45; /* Updated */
+
+    /* Spacing */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+
+    /* Border Radius */
+    --radius-sm: 3px;
+    --radius-md: 5px;
+    --radius-lg: 8px;
+}
+
+/* Base transitions for interactive elements */
+button,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="file"],
+input[type="color"],
+input[type="url"],
+select,
+textarea,
+.form-element,
+.palette-icon,
+.draggable-icon {
+    transition: background-color 0.2s ease-out,
+                border-color 0.2s ease-out,
+                color 0.2s ease-out,
+                box-shadow 0.2s ease-out,
+                opacity 0.2s ease-out,
+                transform 0.15s ease-out;
+}
+
+.settings-panel .background-config-section {
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out, max-height 0.3s ease-out;
+    overflow: hidden;
+}
+.settings-panel .background-config-section.hidden-section {
+    opacity: 0;
+    transform: translateY(-10px);
+    max-height: 0px !important;
+    pointer-events: none;
+}
+
+
+body {
+    font-family: var(--font-primary);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    color: var(--text-color-primary);
+    background-color: var(--background-app);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+    text-align: right;
+    font-weight: 400;
+}
+
+.editor-container {
+    display: flex;
+    width: 95vw;
+    height: 90vh;
+    max-width: 1800px;
+    max-height: 1000px;
+    background-color: var(--background-main);
+    box-shadow: var(--shadow-lg);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.settings-panel, .elements-panel {
+    width: 280px;
+    padding: var(--space-5);
+    background-color: var(--secondary-color);
+    box-sizing: border-box;
+    overflow-y: auto;
+    border: none;
+}
+
+.settings-panel {
+    border-left: 1px solid var(--border-color);
+}
+
+.elements-panel {
+    border-right: 1px solid var(--border-color);
+}
+
+.form-preview-area {
+    flex-grow: 1;
+    padding: var(--space-5);
+    background-color: var(--background-main);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: auto;
+    box-sizing: border-box;
+}
+
+.login-form-canvas {
+    width: 100%;
+    max-width: 450px;
+    min-height: 300px;
+    padding: var(--space-6);
+    border: 1px dashed var(--tertiary-color);
+    box-sizing: border-box;
+    position: relative;
+    margin-top: var(--space-5);
+    transition: background-color 0.2s ease-out, border-color 0.2s ease-out;
+}
+.login-form-canvas.drop-active {
+    background-color: var(--primary-color-light) !important;
+    border-color: var(--primary-color) !important;
+}
+.login-form-canvas.drop-target {
+    border-color: var(--primary-color-dark) !important;
+    background-color: var(--primary-color-light) !important;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+}
+
+.settings-panel h2, .elements-panel h2, .form-preview-area h2 {
+    font-size: var(--font-size-lg);
+    color: var(--text-color-primary);
+    margin-top: 0;
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 700;
+    text-align: right;
+}
+
+.settings-panel h3,
+.settings-panel .background-settings-title,
+.settings-panel .template-settings-title,
+.settings-panel .icon-settings-title {
+    font-size: var(--font-size-md);
+    color: var(--text-color-primary);
+    font-weight: 600;
+    margin-top: var(--space-6);
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--tertiary-color);
+    text-align: right;
+}
+.settings-panel h4 {
+    font-size: var(--font-size-base);
+    color: var(--text-color-secondary);
+    font-weight: 600;
+    margin-bottom: var(--space-3);
+    text-align: right;
+}
+
+/* Settings Panel Controls Styling */
+.settings-panel label,
+.settings-panel .template-selector-label,
+.settings-panel .icon-settings-container label[for="icon-upload-input"] {
+    display: block;
+    font-weight: 500;
+    color: var(--text-color-secondary);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-2);
+    line-height: var(--line-height-tight);
+    text-align: right;
+}
+
+.settings-panel .background-type-selector label {
+    display: inline-flex;
+    align-items: center;
+    margin-left: var(--space-3);
+    font-size: var(--font-size-sm);
+    font-weight: 400;
+    color: var(--text-color-secondary);
+    cursor: pointer;
+}
+.settings-panel .background-type-selector input[type="radio"] {
+    margin-left: var(--space-1);
+    cursor: pointer;
+    accent-color: var(--primary-color);
+}
+
+.settings-panel input[type="text"],
+.settings-panel input[type="number"],
+.settings-panel input[type="email"],
+.settings-panel input[type="password"],
+.settings-panel input[type="url"],
+.settings-panel textarea,
+.settings-panel select,
+.settings-panel #template-select {
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--input-background);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-color-primary);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-base);
+    margin-bottom: var(--space-4);
+}
+.settings-panel input[type="text"]:focus,
+.settings-panel input[type="number"]:focus,
+.settings-panel input[type="email"]:focus,
+.settings-panel input[type="password"]:focus,
+.settings-panel input[type="url"]:focus,
+.settings-panel textarea:focus,
+.settings-panel select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(var(--primary-color-light-rgb), 0.35);
+}
+
+.settings-panel input[type="color"] {
+    width: 100%;
+    padding: var(--space-1);
+    height: calc(var(--font-size-sm) * var(--line-height-base) + (2 * var(--space-2)) + 2px + (2 * var(--space-1)));
+    min-height: 38px;
+    cursor: pointer;
+    margin-bottom: var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    background-color: var(--input-background);
+}
+.settings-panel input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+.settings-panel input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: calc(var(--radius-sm) - 1px);
+}
+.settings-panel input[type="color"]::-moz-color-swatch {
+    border: none;
+    border-radius: calc(var(--radius-sm) - 1px);
+}
+
+.settings-panel input[type="file"] {
+    padding: var(--space-2);
+    font-size: var(--font-size-xs);
+    margin-bottom: var(--space-4);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    width: 100%;
+}
+.settings-panel input[type="file"]::file-selector-button {
+    font-family: var(--font-primary);
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    color: var(--text-on-primary);
+    background-color: var(--primary-color);
+    border: none;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    margin-left: var(--space-3);
+    cursor: pointer;
+}
+.settings-panel input[type="file"]::file-selector-button:hover {
+    background-color: var(--primary-color-dark);
+}
+
+.settings-panel textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.settings-panel button,
+.settings-panel .remove-button {
+    display: block;
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    font-family: var(--font-primary);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    text-align: center;
+    margin-top: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.settings-panel button {
+    background-color: var(--primary-color);
+    color: var(--text-on-primary);
+}
+.settings-panel button:hover {
+    background-color: var(--primary-color-dark);
+}
+.settings-panel button:active {
+    transform: translateY(1px);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.settings-panel .remove-button {
+    background-color: var(--accent-error);
+    color: var(--text-on-primary);
+}
+.settings-panel .remove-button:hover {
+    background-color: #D32F2F;
+}
+.settings-panel .remove-button:active {
+    transform: translateY(1px);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Elements Panel Items */
+.elements-panel .form-element {
+    display: flex;
+    align-items: center;
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--input-background);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-color-secondary);
+    font-weight: 500;
+    font-size: var(--font-size-sm);
+    cursor: grab;
+    margin-bottom: var(--space-2);
+    text-align: right;
+    box-shadow: var(--shadow-xs);
+}
+.elements-panel .form-element:hover {
+    border-color: var(--primary-color);
+    background-color: var(--tertiary-color);
+    color: var(--primary-color);
+    box-shadow: var(--shadow-sm);
+}
+.elements-panel .form-element:active {
+    cursor: grabbing;
+    background-color: var(--primary-color-light);
+    color: var(--text-on-primary);
+    border-color: var(--primary-color-dark);
+}
+.elements-panel .form-element svg {
+    width: 18px;
+    height: 18px;
+    margin-right: var(--space-2);
+    flex-shrink: 0;
+}
+html[dir="rtl"] .elements-panel .form-element svg {
+    margin-left: var(--space-2);
+    margin-right: 0;
+}
+
+
+/* Dropped Elements on Canvas */
+.dropped-element-wrapper {
+    position: relative;
+    margin: var(--space-2) 0;
+    border: 1px dashed transparent;
+    cursor: move;
+    box-sizing: border-box;
+    min-height: 30px;
+}
+.dropped-element-wrapper:hover:not(.selected) {
+    border-color: var(--primary-color-light) !important;
+    box-shadow: var(--shadow-xs);
+}
+.dropped-element-wrapper.selected {
+    border-color: var(--primary-color) !important;
+    box-shadow: var(--shadow-sm), 0 0 0 2px rgba(var(--primary-color-light-rgb), 0.35);
+}
+
+.dropped-form-element {
+    background-color: var(--input-background);
+    display: block;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    pointer-events: none;
+    color: var(--text-color-primary);
+    font-family: var(--font-primary);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding-top: calc(var(--space-2) + 2px);
+    padding-bottom: calc(var(--space-2) + 2px);
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+    font-weight: 400;
+}
+.dropped-element-wrapper input,
+.dropped-element-wrapper button,
+.dropped-element-wrapper textarea,
+.dropped-element-wrapper label,
+.dropped-element-wrapper select,
+.dropped-element-wrapper span {
+    pointer-events: auto;
+    cursor: default;
+}
+input.dropped-form-element::placeholder,
+textarea.dropped-form-element::placeholder {
+    color: var(--text-color-light);
+    opacity: 0.8;
+}
+
+select.dropped-form-element {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22currentColor%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M8%2011.03a.75.75%200%200%201-.53-.22l-4-4a.75.75%200%200%201%201.06-1.06L8%209.19l3.47-3.47a.75.75%200%200%201%201.06%201.06l-4%204a.75.75%200%200%201-.53.22Z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: left var(--space-3) center;
+    background-size: 1em auto;
+    padding-left: calc(var(--space-3) + 1.2em + var(--space-3));
+    padding-right: var(--space-3);
+}
+
+button.dropped-form-element,
+.dropped-form-element[type="submit"],
+.dropped-form-element[type="button"] {
+    background-color: var(--primary-color);
+    color: var(--text-on-primary);
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    padding: var(--space-2) var(--space-4);
+}
+button.dropped-form-element:hover,
+.dropped-form-element[type="submit"]:hover,
+.dropped-form-element[type="button"]:hover {
+    background-color: var(--primary-color-dark);
+}
+
+label.dropped-form-element {
+    background-color: transparent;
+    border: none;
+    padding: var(--space-1) 0;
+    pointer-events: auto;
+    cursor: default;
+    color: var(--text-color-primary);
+    font-weight: 500;
+}
+
+.dropped-element-wrapper label .dropped-form-element[type="checkbox"],
+.dropped-element-wrapper label .dropped-form-element[type="radio"] {
+    width: auto;
+    height: auto;
+    margin-left: var(--space-2);
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    background-color: transparent;
+    accent-color: var(--primary-color);
+}
+.dropped-element-wrapper label span {
+    vertical-align: middle;
+    color: var(--text-color-primary);
+    font-size: var(--font-size-base);
+    pointer-events: auto;
+    cursor: pointer;
+    /* line-height: var(--line-height-base); /* Ensure line height if needed */
+}
+
+
+/* Resize Handles (Interact.js) */
+.interact-resize-handle {
+    background-color: var(--primary-color);
+    border: 1px solid var(--text-on-primary);
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    box-sizing: border-box;
+    z-index: 101;
+    opacity: 0.75;
+}
+.interact-resize-handle:hover {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+
+/* Styles that were previously more general or specific to settings panel, now scoped or adjusted */
+.highlight-zone {
+    border: 2px dashed var(--primary-color);
+    background-color: rgba(var(--primary-color-light-rgb), 0.1);
+}
+.background-config-section {
+    border: 1px solid var(--tertiary-color);
+    padding: var(--space-3);
+    margin-top: var(--space-3);
+    border-radius: var(--radius-md);
+}
+.settings-panel #icon-upload-input {
+    display: block;
+    margin-bottom: var(--space-3);
+    font-size: var(--font-size-sm);
+}
+#uploaded-icons-palette {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    padding: var(--space-2);
+    background-color: var(--tertiary-color);
+    border-radius: var(--radius-md);
+    margin-top: var(--space-2);
+    min-height: 50px;
+    border: 1px solid var(--border-color);
+    max-height: 200px;
+    overflow-y: auto;
+}
+#uploaded-icons-palette .palette-icon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    cursor: grab;
+    border: 1px solid var(--border-color);
+    background-color: var(--background-main);
+    padding: var(--space-1);
+    border-radius: var(--radius-sm);
+}
+.draggable-icon {
+    position: absolute;
+    cursor: move;
+    z-index: 100;
+    border: 1px dashed transparent;
+    box-sizing: border-box;
+}
+.draggable-icon:hover, .draggable-icon.selected-icon {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-sm), 0 0 0 2px rgba(var(--primary-color-light-rgb), 0.35);
+}
+.draggable-icon.selected-icon {
+     border-color: var(--primary-color-dark) !important;
+}
+.draggable-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+.settings-panel .save-button.saved {
+    background-color: var(--accent-success) !important;
+}
+
+/* Preview Mode Styles */
+body.preview-mode .settings-panel,
+body.preview-mode .elements-panel {
+    display: none !important;
+}
+
+body.preview-mode .form-preview-area {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100vh !important;
+    padding: var(--space-6) !important;
+    justify-content: center;
+}
+
+body.preview-mode .login-form-canvas {
+    margin-top: 0;
+}
+
+#exit-preview-button {
+    position: fixed;
+    top: var(--space-4);
+    z-index: 1001;
+    padding: var(--space-2) var(--space-4);
+    background-color: var(--primary-color);
+    color: var(--text-on-primary);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+    display: none;
+}
+
+html[dir="ltr"] #exit-preview-button {
+     right: var(--space-4);
+}
+html[dir="rtl"] #exit-preview-button {
+     left: var(--space-4);
+}
+
+body.preview-mode #exit-preview-button {
+    display: block;
+}
+
+[end of front/style.css]
+
+[end of front/style.css]
+
+[end of front/style.css]
+
+[end of front/style.css]
