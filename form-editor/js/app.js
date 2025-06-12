@@ -1,9 +1,10 @@
 // Main JavaScript file for the form editor
-console.log("ویرایشگر فرم آماده شد - app.js loaded");
+// console.log("ویرایشگر فرم آماده شد - app.js loaded"); // Reduced console noise
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM fully loaded and parsed.");
-    populateElementsPanel();
+    // console.log("DOM fully loaded and parsed."); // Reduced console noise
+    populateTemplateSelector(); // Populate template selector first
+    populateElementsPanel();    // Then populate draggable elements
     setupDragAndDrop();
     setupCanvasClickListener();
 
@@ -20,13 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
         clearPropertiesPanel();
     }
 
-    // For Export Functionality
-    if (typeof setupExportButton === 'function') {
-        setupExportButton();
-    }
-    if (typeof setupModalTabs === 'function') {
-        setupModalTabs();
-    }
+    if (typeof setupExportButton === 'function') setupExportButton();
+    if (typeof setupModalTabs === 'function') setupModalTabs();
 });
 
 function populateElementsPanel() {
@@ -35,7 +31,23 @@ function populateElementsPanel() {
         console.error("Elements panel or formElements definition not found.");
         return;
     }
-    panel.innerHTML = '<h2>عناصر</h2>';
+
+    let elementsListContainer = panel.querySelector('#draggable-elements-list');
+    if (!elementsListContainer) {
+        // Ensure the main "عناصر" H2 is there if not handled by index.html structure around template selector
+        // This assumes the H2 for "عناصر" is still in index.html or managed separately
+        elementsListContainer = document.createElement('div');
+        elementsListContainer.id = 'draggable-elements-list';
+
+        // Find the h2 for "عناصر" and insert the list after it.
+        const elementsH2 = Array.from(panel.querySelectorAll('h2')).find(h2 => h2.textContent === 'عناصر');
+        if (elementsH2 && elementsH2.nextSibling) {
+            panel.insertBefore(elementsListContainer, elementsH2.nextSibling);
+        } else {
+            panel.appendChild(elementsListContainer); // Fallback append
+        }
+    }
+    elementsListContainer.innerHTML = ''; // Clear previous draggable elements
 
     for (const key in formElements) {
         const element = formElements[key];
@@ -44,20 +56,67 @@ function populateElementsPanel() {
         div.setAttribute('draggable', true);
         div.setAttribute('data-element-type', element.type);
         div.innerHTML = element.htmlRepresentation;
-        panel.appendChild(div);
+        elementsListContainer.appendChild(div);
     }
-    // console.log("Elements panel populated."); // Reduce console noise
+    // console.log("Elements panel populated."); // Reduced console noise
 }
 
-function setupDragAndDrop() {
-    const panel = document.getElementById('elements-panel');
+function populateTemplateSelector() {
+    const container = document.getElementById('template-selector-container');
     const canvas = document.getElementById('canvas');
 
-    panel.addEventListener('dragstart', (event) => {
+    if (!container || !canvas || typeof templates === 'undefined') {
+        console.error("Template selector container, canvas, or templates definition not found.");
+        if(container) container.innerHTML = '<p style="color:red; font-size:0.8em;">خطا در بارگذاری قالب‌ها.</p>';
+        return;
+    }
+    // Title (<h3>قالب‌ها</h3>) is assumed to be in index.html from previous step.
+
+    const templatesList = document.createElement('div');
+    templatesList.className = 'templates-list';
+    container.appendChild(templatesList);
+
+    for (const key in templates) {
+        const template = templates[key];
+        const button = document.createElement('button');
+        button.className = 'template-select-button editor-button'; // Re-use editor-button for consistent styling
+        button.textContent = template.name;
+        button.setAttribute('data-template-id', template.id);
+
+        button.addEventListener('click', () => {
+            // console.log("Template selected:", template.name); // Reduced console noise
+            canvas.innerHTML = template.html;
+
+            // Clear any selected element state from properties panel
+            if (typeof clearPropertiesPanel === 'function') {
+                clearPropertiesPanel();
+            }
+            // Save the new state (the template itself) to LocalStorage
+            if (typeof saveCanvasState === 'function') {
+                 saveCanvasState();
+            }
+            // No need to call setupCanvasClickListener again, it's on the canvas element itself.
+        });
+        templatesList.appendChild(button);
+    }
+    // console.log("Template selector populated."); // Reduced console noise
+}
+
+
+function setupDragAndDrop() {
+    // Drag source is now #draggable-elements-list within #elements-panel
+    const draggableItemsContainer = document.getElementById('draggable-elements-list');
+    const canvas = document.getElementById('canvas');
+
+    if (!draggableItemsContainer) {
+        console.error("#draggable-elements-list container not found for dragstart listener.");
+        return;
+    }
+
+    draggableItemsContainer.addEventListener('dragstart', (event) => {
         const paletteItem = event.target.closest('.palette-item');
         if (paletteItem) {
             event.dataTransfer.setData('text/plain', paletteItem.getAttribute('data-element-type'));
-            // console.log('Drag started:', paletteItem.getAttribute('data-element-type')); // Reduce console noise
         }
     });
 
@@ -68,14 +127,14 @@ function setupDragAndDrop() {
     canvas.addEventListener('drop', (event) => {
         event.preventDefault();
         const elementType = event.dataTransfer.getData('text/plain');
-        // console.log('Dropped:', elementType); // Reduce console noise
 
         if (typeof formElements !== 'undefined' && formElements[elementType] && typeof formElements[elementType].getFormHtml === 'function') {
-            if (canvas.querySelector('.form-template')) {
-                const existingUserElements = canvas.querySelectorAll('.form-group.draggable-item');
-                if (existingUserElements.length === 0) {
-                    canvas.innerHTML = '';
-                }
+            // If a .form-template div is on canvas (likely from a loaded template)
+            // AND it contains no .form-group.draggable-item elements yet (meaning it's pristine),
+            // then clear the canvas before dropping the first real element.
+            const formTemplateOnCanvas = canvas.querySelector('.form-template');
+            if (formTemplateOnCanvas && formTemplateOnCanvas.querySelectorAll('.form-group.draggable-item').length === 0) {
+                canvas.innerHTML = '';
             }
 
             const elementId = elementType + '_' + Date.now();
@@ -94,10 +153,7 @@ function setupDragAndDrop() {
                     newElementNode.dataset.elementType = elementType;
                 }
                 canvas.appendChild(newElementNode);
-                // console.log(elementType, "added to canvas with ID:", elementId); // Reduce console noise
-                if (typeof saveCanvasState === 'function') {
-                    saveCanvasState();
-                }
+                if (typeof saveCanvasState === 'function') saveCanvasState();
             } else {
                  console.error("Could not create a valid DOM element from HTML for", elementType);
             }
@@ -105,7 +161,6 @@ function setupDragAndDrop() {
             console.error("Dropped element type not found or has no getFormHtml method:", elementType);
         }
     });
-    // console.log("Drag and drop event listeners set up."); // Reduce console noise
 }
 
 function setupCanvasClickListener() {
@@ -120,7 +175,6 @@ function setupCanvasClickListener() {
 
         if (clickedElement) {
             clickedElement.classList.add('selected');
-            // console.log('Element selected:', clickedElement.id, "Type:", clickedElement.dataset.elementType); // Reduce console noise
             if (typeof displayProperties === 'function') {
                 displayProperties(clickedElement);
             }
@@ -130,16 +184,17 @@ function setupCanvasClickListener() {
             }
         }
     });
-    // console.log("Canvas click listener for selection set up."); // Reduce console noise
 }
 
 function loadDefaultTemplate() {
     const canvas = document.getElementById('canvas');
     if (canvas && typeof templates !== 'undefined' && templates.simpleLogin && canvas.innerHTML.trim() === '') {
         canvas.innerHTML = templates.simpleLogin.html;
-        // console.log("قالب ورود ساده بارگذاری شد."); // Reduce console noise
+        // Do NOT saveCanvasState here automatically.
+        // Let user action (dropping element, changing property, or choosing another template) trigger first save.
+        // This prevents overwriting a potentially empty localStorage on first load if user immediately picks another template.
     } else if (canvas && canvas.innerHTML.trim() === '') {
-        // console.error("Canvas or simpleLogin template not found for default loading, and canvas is empty."); // Reduce console noise
+        // console.error("Canvas or simpleLogin template not found for default loading, and canvas is empty."); // Reduced console noise
     }
 }
 
@@ -148,14 +203,12 @@ function setupExportButton() {
     const exportButton = document.getElementById('export-button');
     if (exportButton && typeof generateFormHtml === 'function' && typeof getExportableCss === 'function' && typeof showExportModal === 'function') {
         exportButton.addEventListener('click', () => {
-            // console.log("Export button clicked."); // Reduce console noise
             const html = generateFormHtml();
             const css = getExportableCss();
             showExportModal(html, css);
         });
-        // console.log("Export button listener set up."); // Reduce console noise
     } else {
-        console.error("Export button or necessary export functions not found for setup.");
+        // console.error("Export button or necessary export functions not found for setup."); // Reduced console noise
     }
 }
 
@@ -179,11 +232,9 @@ function setupModalTabs() {
             }
         });
     });
-    // Ensure HTML tab is active by default when modal is first shown or page loads
     const defaultActiveTab = modal.querySelector('.tab-button[data-tab="html-output-container"]');
     const defaultActiveContainer = modal.querySelector('#html-output-container');
-    if(defaultActiveTab && defaultActiveContainer){
-        // Check if any tab is already active, if not, activate default.
+     if(defaultActiveTab && defaultActiveContainer){
         const anyActiveTab = modal.querySelector('.tab-button.active');
         if (!anyActiveTab) {
             defaultActiveTab.classList.add('active');
