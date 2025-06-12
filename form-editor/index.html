@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ویرایشگر فرم</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="editor-container">
+        <aside id="elements-panel">
+            <h2>عناصر</h2>
+            <!-- Draggable elements -->
+        </aside>
+        <main id="canvas">
+            <!-- Form preview/building area -->
+        </main>
+        <aside id="properties-panel">
+            <h2>تنظیمات</h2>
+            <p>برای ویرایش، یک عنصر را از بوم انتخاب کنید.</p>
+            <!-- Properties -->
+            <button id="export-button" class="editor-button">خروجی HTML/CSS</button>
+        </aside>
+    </div>
+
+    <!-- Export Modal -->
+    <div id="export-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="close-modal-button" class="modal-close-button">&times;</button>
+            <h3>کد خروجی</h3>
+            <div class="code-tabs">
+                <button class="tab-button active" data-tab="html-output-container">HTML</button>
+                <button class="tab-button" data-tab="css-output-container">CSS</button>
+            </div>
+            <div id="html-output-container" class="code-container active">
+                <textarea id="html-output" readonly></textarea>
+            </div>
+            <div id="css-output-container" class="code-container">
+                <textarea id="css-output" readonly></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/templates.js"></script>
+    <script src="js/elements.js"></script>
+    <script src="js/properties.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/export.js"></script> <!-- Load export.js -->
+    <script src="js/app.js"></script>
+</body>
+</html>

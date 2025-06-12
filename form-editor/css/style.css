@@ -1,0 +1,326 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: #333;
+}
+
+#editor-container {
+    display: flex;
+    width: 95%;
+    max-width: 1600px;
+    height: 80vh;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+#elements-panel, #properties-panel {
+    width: 250px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-left: 1px solid #e0e0e0; /* For properties-panel */
+    border-right: 1px solid #e0e0e0; /* For elements-panel */
+    overflow-y: auto;
+}
+
+#elements-panel h2, #properties-panel h2 {
+    margin-top: 0;
+    font-size: 1.2em;
+    color: #555;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+#canvas {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #e9e9e9; /* Slightly different background for canvas */
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* justify-content: center; */ /* Commented out to allow content to flow from top */
+}
+
+#canvas h2 {
+    margin-top: 0;
+    color: #777;
+    font-size: 1em;
+    text-align: center;
+}
+
+/* Basic styling for future elements for visibility */
+.form-element-placeholder {
+    border: 1px dashed #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    cursor: grab;
+    text-align: center;
+}
+
+/* Styling for the displayed form template */
+.form-template {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Default to full width of canvas area */
+    max-width: 400px; /* Max width for a typical login form */
+    margin: 20px auto; /* Center it in the canvas if canvas is wider */
+    border: 1px solid #ddd;
+}
+
+.form-template h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    color: #333;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.form-group input[type="email"],
+.form-group input[type="password"] {
+    width: calc(100% - 20px); /* Account for padding */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-group button[type="submit"] {
+    width: 100%;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form-group button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* Styling for Draggable Palette Items */
+.palette-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    cursor: grab;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+.palette-item:hover {
+    background-color: #dee2e6;
+}
+
+.palette-item .form-element-placeholder {
+    border: none; /* Remove border from placeholder text if it's inside palette item */
+    padding: 0;
+    margin-bottom: 0;
+    background-color: transparent;
+}
+
+/* Styling for items once dropped on canvas (basic) */
+/* .draggable-item in canvas.js already has some styling from template */
+#canvas .form-group { /* Ensure dropped items also have some spacing */
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px dashed #adb5bd; /* Dashed border for newly dropped items */
+    background-color: #fff; /* Give them a background */
+}
+#canvas .form-group label,
+#canvas .form-group input,
+#canvas .form-group button {
+     /* Ensure they are block or styled appropriately if not already */
+}
+
+/* Styling for Selected Elements on Canvas */
+#canvas .form-group.selected {
+    border: 2px solid #007bff; /* Blue border for selected */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Styling for Properties Panel */
+#properties-panel .property-group {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+}
+
+#properties-panel .property-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    color: #495057;
+    font-weight: bold;
+}
+
+#properties-panel .property-group input[type="text"],
+#properties-panel .property-group input[type="color"] { /* Added color type for future */
+    width: calc(100% - 16px); /* Account for padding */
+    padding: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+#properties-panel > p { /* Styling for the default message */
+    font-size: 0.9em;
+    color: #6c757d;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Export Button */
+.editor-button {
+    display: block;
+    width: calc(100% - 40px); /* Adjust to fit padding of properties-panel */
+    margin: 20px auto 10px;
+    padding: 10px 15px;
+    background-color: #28a745; /* Green */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    cursor: pointer;
+    text-align: center;
+}
+
+.editor-button:hover {
+    background-color: #218838;
+}
+
+/* Export Modal Styles */
+.modal-overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.modal-close-button {
+    position: absolute;
+    top: 10px;
+    /* right: 15px; For LTR */
+    left: 15px; /* Adjusted for RTL */
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #aaa;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+/* If you want specific for LTR uncomment this */
+/* html[dir="ltr"] .modal-close-button {
+    right: 15px;
+    left: auto;
+} */
+
+
+.modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.code-tabs {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.tab-button {
+    padding: 10px 15px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    /* margin-left: 5px; For LTR */
+    margin-right: 5px; /* For RTL */
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+}
+/* If you want specific for LTR uncomment this */
+/* html[dir="ltr"] .tab-button {
+    margin-left: 5px;
+    margin-right: 0;
+} */
+
+
+.tab-button.active {
+    background-color: #fff;
+    border-bottom: 1px solid #fff;
+    position: relative;
+    top: 1px;
+}
+
+.code-container {
+    display: none;
+    border: 1px solid #ddd;
+    padding:10px;
+    border-radius: 0 0 4px 4px;
+    flex-grow: 1;
+    display: flex;
+}
+
+.code-container.active {
+    display: flex;
+}
+
+.code-container textarea {
+    width: 100%;
+    height: 300px;
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    font-family: monospace;
+    font-size: 0.9em;
+    resize: none;
+    box-sizing: border-box;
+    direction: ltr; /* Ensure code textareas are LTR */
+}
